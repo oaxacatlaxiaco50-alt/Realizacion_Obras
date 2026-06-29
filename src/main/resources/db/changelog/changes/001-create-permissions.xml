@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20260629-001-create-permissions" author="jorge">
+        <createTable tableName="permissions">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+        </createTable>
+
+        <!-- Seeding initial permissions -->
+        <insert tableName="permissions">
+            <column name="name" value="USER_VIEW"/>
+            <column name="description" value="Permite ver la lista de usuarios y detalles"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="USER_CREATE"/>
+            <column name="description" value="Permite registrar nuevos usuarios"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="USER_UPDATE"/>
+            <column name="description" value="Permite editar usuarios existentes"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="USER_DELETE"/>
+            <column name="description" value="Permite desactivar o eliminar usuarios"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="ROLE_VIEW"/>
+            <column name="description" value="Permite ver la lista de roles y sus permisos"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="ROLE_CREATE"/>
+            <column name="description" value="Permite crear nuevos roles"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="ROLE_UPDATE"/>
+            <column name="description" value="Permite modificar roles y asignar permisos"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="ROLE_DELETE"/>
+            <column name="description" value="Permite eliminar roles"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="BITACORA_VIEW"/>
+            <column name="description" value="Permite ver bitácoras de obras"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="BITACORA_CREATE"/>
+            <column name="description" value="Permite registrar entradas en bitácoras"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="BITACORA_UPDATE"/>
+            <column name="description" value="Permite editar entradas de bitácoras"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="BITACORA_DELETE"/>
+            <column name="description" value="Permite eliminar bitácoras"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="AUDIT_VIEW"/>
+            <column name="description" value="Permite consultar el log de auditoría del sistema"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

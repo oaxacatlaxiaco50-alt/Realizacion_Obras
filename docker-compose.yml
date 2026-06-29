@@ -1,0 +1,65 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: obras_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: obras_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - obras_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: obras_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@obraspublicas.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - obras_network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: obras_backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: obras_db
+      DB_USER: postgres
+      DB_PASS: postgres
+      JWT_SECRET: desarrollo_local_secret_key_debe_tener_al_menos_32_bytes_seguro_123456
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - obras_network
+
+volumes:
+  postgres_data:
+
+networks:
+  obras_network:
+    driver: bridge
