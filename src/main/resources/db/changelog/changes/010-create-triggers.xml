@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20260630-010-create-triggers" author="antigravity">
+        <sql dbms="postgresql" splitStatements="false">
+            -- Prevent UPDATE/DELETE on bitacoras
+            CREATE OR REPLACE FUNCTION prevent_bitacoras_modify()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                RAISE EXCEPTION 'Los registros de bitacora son de solo lectura y no se pueden modificar ni eliminar.';
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_prevent_update_bitacoras
+            BEFORE UPDATE ON bitacoras
+            FOR EACH ROW
+            EXECUTE FUNCTION prevent_bitacoras_modify();
+
+            CREATE TRIGGER trg_prevent_delete_bitacoras
+            BEFORE DELETE ON bitacoras
+            FOR EACH ROW
+            EXECUTE FUNCTION prevent_bitacoras_modify();
+
+            -- Prevent UPDATE/DELETE on audit_logs
+            CREATE OR REPLACE FUNCTION prevent_audit_logs_modify()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                RAISE EXCEPTION 'Los registros de log de auditoria son de solo lectura y no se pueden modificar ni eliminar.';
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_prevent_update_audit_logs
+            BEFORE UPDATE ON audit_logs
+            FOR EACH ROW
+            EXECUTE FUNCTION prevent_audit_logs_modify();
+
+            CREATE TRIGGER trg_prevent_delete_audit_logs
+            BEFORE DELETE ON audit_logs
+            FOR EACH ROW
+            EXECUTE FUNCTION prevent_audit_logs_modify();
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20260630-011-seed-obra-permissions" author="antigravity">
+        <!-- Seed permissions -->
+        <insert tableName="permissions">
+            <column name="name" value="OBRA_VIEW"/>
+            <column name="description" value="Permite ver la lista de obras y sus detalles"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="OBRA_CREATE"/>
+            <column name="description" value="Permite registrar nuevas obras"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="OBRA_UPDATE"/>
+            <column name="description" value="Permite editar información de obras existentes"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="OBRA_CHANGE_STATUS"/>
+            <column name="description" value="Permite cambiar el estatus de las obras"/>
+        </insert>
+
+        <!-- Map permissions to ADMINISTRADOR -->
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'OBRA_VIEW')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'OBRA_CREATE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'OBRA_UPDATE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'OBRA_CHANGE_STATUS')"/>
+        </insert>
+
+        <!-- Map permissions to SUPERVISOR -->
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPERVISOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'OBRA_VIEW')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPERVISOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'OBRA_UPDATE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPERVISOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'OBRA_CHANGE_STATUS')"/>
+        </insert>
+
+        <!-- Map permissions to CONTRATISTA -->
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'CONTRATISTA')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'OBRA_VIEW')"/>
+        </insert>
+
+        <!-- Map permissions to AUDITOR -->
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'AUDITOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'OBRA_VIEW')"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
