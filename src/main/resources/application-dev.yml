@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/obras_db
+    url: jdbc:postgresql://127.0.0.1:5434/obras_db
     username: postgres
-    password: postgres
+    password: KOpi321*
     driver-class-name: org.postgresql.Driver
   
   jpa:

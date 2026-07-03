@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20260630-008-seed-test-users" author="antigravity">
+        <!-- Seed Supervisor User -->
+        <insert tableName="users">
+            <column name="first_name" value="Pedro"/>
+            <column name="last_name" value="Supervisor"/>
+            <column name="email" value="pedro@obraspublicas.com"/>
+            <column name="username" value="supervisor"/>
+            <column name="password" value="$2a$10$8.225d3S1reN1g.1t5E.K.w1G2f8/t7LdQpYg7gV5bVjHjK.D5r2u"/>
+            <column name="active" valueBoolean="true"/>
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" valueComputed="(SELECT id FROM users WHERE username = 'supervisor')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPERVISOR')"/>
+        </insert>
+
+        <!-- Seed Contratista User -->
+        <insert tableName="users">
+            <column name="first_name" value="Juan"/>
+            <column name="last_name" value="Contratista"/>
+            <column name="email" value="juan@obraspublicas.com"/>
+            <column name="username" value="contratista"/>
+            <column name="password" value="$2a$10$8.225d3S1reN1g.1t5E.K.w1G2f8/t7LdQpYg7gV5bVjHjK.D5r2u"/>
+            <column name="active" valueBoolean="true"/>
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" valueComputed="(SELECT id FROM users WHERE username = 'contratista')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'CONTRATISTA')"/>
+        </insert>
+
+        <!-- Seed Auditor User -->
+        <insert tableName="users">
+            <column name="first_name" value="Ana"/>
+            <column name="last_name" value="Auditora"/>
+            <column name="email" value="ana@obraspublicas.com"/>
+            <column name="username" value="auditor"/>
+            <column name="password" value="$2a$10$8.225d3S1reN1g.1t5E.K.w1G2f8/t7LdQpYg7gV5bVjHjK.D5r2u"/>
+            <column name="active" valueBoolean="true"/>
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" valueComputed="(SELECT id FROM users WHERE username = 'auditor')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'AUDITOR')"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
