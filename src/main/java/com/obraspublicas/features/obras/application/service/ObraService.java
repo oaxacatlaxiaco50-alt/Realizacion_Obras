@@ -173,6 +173,10 @@ public class ObraService {
         return obraRepository.findAll(codigo, nombre, estatus, responsableId, startFechaInicio, endFechaInicio, pageable);
     }
 
+    public Page<Obra> searchGlobal(String keyword, Pageable pageable) {
+        return obraRepository.searchGlobal(keyword, pageable);
+    }
+
     private Obra cloneObra(Obra original) {
         return Obra.builder()
                 .id(original.getId())

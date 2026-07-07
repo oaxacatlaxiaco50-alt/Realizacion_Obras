@@ -87,4 +87,15 @@ public class ObraController {
         );
         return ResponseEntity.ok(obrasPage.map(mapper::toResponse));
     }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasAuthority('OBRA_VIEW')")
+    @Operation(summary = "Búsqueda global", description = "Busca obras por una palabra clave que coincida en código, nombre o descripción.")
+    public ResponseEntity<Page<ObraResponse>> buscarObras(
+            @RequestParam String q,
+            @PageableDefault(size = 20, sort = "createdAt") Pageable pageable
+    ) {
+        Page<Obra> obrasPage = obraService.searchGlobal(q, pageable);
+        return ResponseEntity.ok(obrasPage.map(mapper::toResponse));
+    }
 }

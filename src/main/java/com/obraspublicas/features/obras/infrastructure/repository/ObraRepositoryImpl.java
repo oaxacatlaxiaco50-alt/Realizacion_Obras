@@ -76,4 +76,20 @@ public class ObraRepositoryImpl implements ObraRepository {
 
         return jpaRepository.findAll(spec, pageable).map(mapper::toDomain);
     }
+
+    @Override
+    public Page<Obra> searchGlobal(String keyword, Pageable pageable) {
+        Specification<ObraEntity> spec = Specification.where(null);
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String likePattern = "%" + keyword.toLowerCase() + "%";
+            spec = spec.and((root, query, cb) -> cb.or(
+                    cb.like(cb.lower(root.get("codigo")), likePattern),
+                    cb.like(cb.lower(root.get("nombre")), likePattern),
+                    cb.like(cb.lower(root.get("descripcion")), likePattern)
+            ));
+        }
+
+        return jpaRepository.findAll(spec, pageable).map(mapper::toDomain);
+    }
 }

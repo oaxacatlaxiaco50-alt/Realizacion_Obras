@@ -22,4 +22,6 @@ public interface ObraRepository {
             LocalDate endFechaInicio,
             Pageable pageable
     );
+    
+    Page<Obra> searchGlobal(String keyword, Pageable pageable);
 }
