@@ -1,6 +1,7 @@
 package com.obraspublicas.features.obras.application.service;
 
 import com.obraspublicas.features.audit.application.service.AuditService;
+import com.obraspublicas.features.expedientes.application.service.ExpedienteObraService;
 import com.obraspublicas.features.obras.domain.model.Obra;
 import com.obraspublicas.features.obras.domain.model.ObraEstatus;
 import com.obraspublicas.features.obras.domain.repository.ObraRepository;
@@ -28,6 +29,7 @@ public class ObraService {
     private final ObraRepository obraRepository;
     private final UserRepository userRepository;
     private final AuditService auditService;
+    private final ExpedienteObraService expedienteObraService;
 
     @Transactional
     public Obra registrarObra(ObraCreateRequest request) {
@@ -51,6 +53,9 @@ public class ObraService {
                 .build();
 
         Obra savedObra = obraRepository.save(obra);
+
+        // Generar expediente técnico inicial en estatus FALTANTE
+        expedienteObraService.generarExpedienteInicial(savedObra.getId());
 
         // Registrar auditoría y bitácora
         auditService.registrarEvento(

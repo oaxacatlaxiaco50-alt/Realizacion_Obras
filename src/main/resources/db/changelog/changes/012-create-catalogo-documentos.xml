@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="20260708-012-create-catalogo-documentos" author="jorge">
+        <createTable tableName="catalogo_documentos">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="seccion" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="requerido" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="activo" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- PARTE SOCIAL -->
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PARTE_SOCIAL"/>
+            <column name="nombre" value="Acta de Integracion del Consejo de Desarrollo Municipal (Art. 33 de la L.C.F. y 17 de la L.C.F.E.O. y art. 68 fracc. XIV de la L.O.M.E.O.)"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PARTE_SOCIAL"/>
+            <column name="nombre" value="Acta de Selección de Obras"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PARTE_SOCIAL"/>
+            <column name="nombre" value="Acta de Priorización de Obras, Acciones Sociales Básicas"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PARTE_SOCIAL"/>
+            <column name="nombre" value="Acta de Integración del Comité de Obras"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PARTE_SOCIAL"/>
+            <column name="nombre" value="Convenio de Concertación"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PARTE_SOCIAL"/>
+            <column name="nombre" value="Acta de Cabildo de Aprobación de la Obra."/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PARTE_SOCIAL"/>
+            <column name="nombre" value="Acta de Acuerdo de Cabildo para Ejecutar la Obra por Administracion Directa"/>
+        </insert>
+
+        <!-- PROYECTO EJECUTIVO -->
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Estudio de Factibilidad Tecnica, economica y ecologica de la realizacion de la obra"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Oficio de Notificación, Aprobación y Autorización de Obras"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Anexo del Oficio de Notificación, Aprobación y Autorización de Obras"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Cedula de Inf. Basica"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Generalidades de la Inversion"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Documentos que Acrediten la Tenencia de la Tierra"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Dictamen de Impacto Ambiental"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Presupuesto de Obra (Catalogo de Conceptos)"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Presupuesto de Obra (Explosion de Insumos)"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Generadores de Obra Programada"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Planos de Proyecto"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Especificaciones Generales y Particulares"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Firma del Director Responsable de Obra"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Programa de Obra e Inversion"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Croquis de Microlocalización"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="PROYECTO_EJECUTIVO"/>
+            <column name="nombre" value="Croquis de Macrolocalización"/>
+        </insert>
+
+        <!-- DOCUMENTACION COMPROBATORIA -->
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="DOCUMENTACION_COMPROBATORIA"/>
+            <column name="nombre" value="Inventario de la maquinaria y equipo de construccion con que cuenta el municipio (art. 8 fracc. I y 62 de la L.O.P.S.R.E.O.)"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="DOCUMENTACION_COMPROBATORIA"/>
+            <column name="nombre" value="Relacion de la plantilla del Personal Tecnico y Administrativo relacionado con la obra (art. 8 fracc. III y 62 de la L.O.P.S.R.E.O.)"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="DOCUMENTACION_COMPROBATORIA"/>
+            <column name="nombre" value="Documentacion que soporta el pago de Mano de Obra (Listas de Raya)"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="DOCUMENTACION_COMPROBATORIA"/>
+            <column name="nombre" value="Identificacion Oficial de los Trabajadores que Aparecen en las listas de Raya"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="DOCUMENTACION_COMPROBATORIA"/>
+            <column name="nombre" value="Documentacion que soporta la Compra de Materiales (Facturas)"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="DOCUMENTACION_COMPROBATORIA"/>
+            <column name="nombre" value="Reporte Fotografico"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="DOCUMENTACION_COMPROBATORIA"/>
+            <column name="nombre" value="Notas de Bitacora de Obra"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="DOCUMENTACION_COMPROBATORIA"/>
+            <column name="nombre" value="Convocatoria"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="DOCUMENTACION_COMPROBATORIA"/>
+            <column name="nombre" value="Contrato de Arrendamiento de Maquinaria (art. 63 de la L.O.P.S.R.E.O)"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="DOCUMENTACION_COMPROBATORIA"/>
+            <column name="nombre" value="Acta de entrega Recepcion"/>
+        </insert>
+        <insert tableName="catalogo_documentos">
+            <column name="seccion" value="DOCUMENTACION_COMPROBATORIA"/>
+            <column name="nombre" value="Cedula Detallada de la facturacion total de la obra."/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
