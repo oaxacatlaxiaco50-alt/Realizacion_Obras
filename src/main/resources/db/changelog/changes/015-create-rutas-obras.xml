@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20260715-015-create-rutas-obras" author="kevin">
+
+        <!-- Tabla principal de rutas -->
+        <createTable tableName="rutas_obras">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="obra_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descripcion" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- FK rutas_obras → obras -->
+        <addForeignKeyConstraint
+                baseTableName="rutas_obras"
+                baseColumnNames="obra_id"
+                referencedTableName="obras"
+                referencedColumnNames="id"
+                constraintName="fk_rutas_obras_obra"
+                onDelete="CASCADE"/>
+
+        <!-- Puntos (coordenadas ordenadas) de la ruta trazada en el mapa -->
+        <createTable tableName="ruta_puntos">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ruta_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="latitud" type="DECIMAL(10,7)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="longitud" type="DECIMAL(10,7)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- El orden define la secuencia del camino; no es línea directa -->
+            <column name="orden" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- FK ruta_puntos → rutas_obras -->
+        <addForeignKeyConstraint
+                baseTableName="ruta_puntos"
+                baseColumnNames="ruta_id"
+                referencedTableName="rutas_obras"
+                referencedColumnNames="id"
+                constraintName="fk_ruta_puntos_ruta"
+                onDelete="CASCADE"/>
+
+    </changeSet>
+
+</databaseChangeLog>
