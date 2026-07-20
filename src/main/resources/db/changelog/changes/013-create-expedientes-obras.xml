@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="20260708-013-create-expedientes-obras" author="jorge">
+        <createTable tableName="expedientes_obras">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="obra_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_expedientes_obras_obra_id" references="obras(id)"/>
+            </column>
+            <column name="documento_catalogo_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_expedientes_obras_catalogo_id" references="catalogo_documentos(id)"/>
+            </column>
+            <column name="estado" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="archivo_url" type="VARCHAR(500)"/>
+            <column name="observaciones" type="TEXT"/>
+            <column name="fecha_revision" type="TIMESTAMP"/>
+            <column name="revisado_por" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_expedientes_obras_revisado_por" references="users(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="expedientes_obras" columnNames="obra_id, documento_catalogo_id" constraintName="uc_expedientes_obras_unica"/>
+    </changeSet>
+</databaseChangeLog>

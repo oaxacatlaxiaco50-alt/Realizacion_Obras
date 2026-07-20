@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20260630-009-create-obras" author="antigravity">
+        <createTable tableName="obras">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="codigo" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descripcion" type="TEXT"/>
+            <column name="monto" type="NUMERIC(15,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fecha_inicio" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fecha_fin" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="estatus" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="responsable_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="obras" baseColumnNames="responsable_id"
+                                 referencedTableName="users" referencedColumnNames="id"
+                                 constraintName="fk_obras_responsable" onDelete="RESTRICT"/>
+
+        <addForeignKeyConstraint baseTableName="bitacoras" baseColumnNames="obra_id"
+                                 referencedTableName="obras" referencedColumnNames="id"
+                                 constraintName="fk_bitacoras_obra" onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

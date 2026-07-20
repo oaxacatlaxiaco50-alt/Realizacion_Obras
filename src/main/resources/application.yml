@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: obras-publicas-api
+
+server:
+  port: 8081
+  error:
+    include-message: always
+    include-binding-errors: always

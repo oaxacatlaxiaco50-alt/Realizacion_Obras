@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20260629-004-create-role-permissions" author="jorge">
+        <createTable tableName="role_permissions">
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="role_permissions" columnNames="role_id, permission_id" constraintName="pk_role_permissions"/>
+
+        <addForeignKeyConstraint baseTableName="role_permissions" baseColumnNames="role_id"
+                                 referencedTableName="roles" referencedColumnNames="id"
+                                 constraintName="fk_role_permissions_role" onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="role_permissions" baseColumnNames="permission_id"
+                                 referencedTableName="permissions" referencedColumnNames="id"
+                                 constraintName="fk_role_permissions_permission" onDelete="CASCADE"/>
+
+        <!-- Seeding ADMINISTRADOR permissions (All) -->
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_VIEW')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_CREATE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_UPDATE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_DELETE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'ROLE_VIEW')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'ROLE_CREATE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'ROLE_UPDATE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'ROLE_DELETE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'BITACORA_VIEW')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'BITACORA_CREATE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'BITACORA_UPDATE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'BITACORA_DELETE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'AUDIT_VIEW')"/>
+        </insert>
+
+        <!-- Seeding SUPERVISOR permissions -->
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPERVISOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_VIEW')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPERVISOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'BITACORA_VIEW')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPERVISOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'BITACORA_CREATE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPERVISOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'BITACORA_UPDATE')"/>
+        </insert>
+
+        <!-- Seeding CONTRATISTA permissions -->
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'CONTRATISTA')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'BITACORA_VIEW')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'CONTRATISTA')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'BITACORA_CREATE')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'CONTRATISTA')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'BITACORA_UPDATE')"/>
+        </insert>
+
+        <!-- Seeding AUDITOR permissions -->
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'AUDITOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'BITACORA_VIEW')"/>
+        </insert>
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'AUDITOR')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'AUDIT_VIEW')"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

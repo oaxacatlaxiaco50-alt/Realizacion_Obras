@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20260715-016-seed-geocerca-ruta-permissions" author="kevin">
+
+        <!-- Permisos para Geocercas -->
+        <insert tableName="permissions">
+            <column name="name" value="GEOCERCA_CREATE"/>
+            <column name="description" value="Permiso para crear geocercas de obras"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="GEOCERCA_VIEW"/>
+            <column name="description" value="Permiso para consultar geocercas de obras"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="GEOCERCA_UPDATE"/>
+            <column name="description" value="Permiso para actualizar geocercas de obras"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="GEOCERCA_DELETE"/>
+            <column name="description" value="Permiso para eliminar geocercas de obras"/>
+        </insert>
+
+        <!-- Permisos para Rutas -->
+        <insert tableName="permissions">
+            <column name="name" value="RUTA_CREATE"/>
+            <column name="description" value="Permiso para crear rutas de obras"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="RUTA_VIEW"/>
+            <column name="description" value="Permiso para consultar rutas de obras"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="RUTA_UPDATE"/>
+            <column name="description" value="Permiso para actualizar rutas de obras"/>
+        </insert>
+        <insert tableName="permissions">
+            <column name="name" value="RUTA_DELETE"/>
+            <column name="description" value="Permiso para eliminar rutas de obras"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>

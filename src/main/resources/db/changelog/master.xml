@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <include file="db/changelog/changes/001-create-permissions.xml"/>
+    <include file="db/changelog/changes/002-create-roles.xml"/>
+    <include file="db/changelog/changes/003-create-users.xml"/>
+    <include file="db/changelog/changes/004-create-role-permissions.xml"/>
+    <include file="db/changelog/changes/005-create-user-roles.xml"/>
+    <include file="db/changelog/changes/006-create-audit-logs.xml"/>
+    <include file="db/changelog/changes/007-create-bitacoras.xml"/>
+    <include file="db/changelog/changes/008-seed-test-users.xml"/>
+    <include file="db/changelog/changes/009-create-obras.xml"/>
+    <include file="db/changelog/changes/010-create-triggers.xml"/>
+    <include file="db/changelog/changes/011-seed-obra-permissions.xml"/>
+    <include file="db/changelog/changes/012-create-catalogo-documentos.xml"/>
+    <include file="db/changelog/changes/013-create-expedientes-obras.xml"/>
+    <include file="db/changelog/changes/014-create-geocercas.xml"/>
+    <include file="db/changelog/changes/015-create-rutas-obras.xml"/>
+    <include file="db/changelog/changes/016-seed-geocerca-ruta-permissions.xml"/>
+
+</databaseChangeLog>

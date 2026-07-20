@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20260629-002-create-roles" author="jorge">
+        <createTable tableName="roles">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Seeding initial roles -->
+        <insert tableName="roles">
+            <column name="name" value="ADMINISTRADOR"/>
+            <column name="description" value="Administrador total del sistema"/>
+            <column name="active" valueBoolean="true"/>
+        </insert>
+        <insert tableName="roles">
+            <column name="name" value="SUPERVISOR"/>
+            <column name="description" value="Supervisor de obras y bitácoras"/>
+            <column name="active" valueBoolean="true"/>
+        </insert>
+        <insert tableName="roles">
+            <column name="name" value="CONTRATISTA"/>
+            <column name="description" value="Contratista asignado a obras específicas"/>
+            <column name="active" valueBoolean="true"/>
+        </insert>
+        <insert tableName="roles">
+            <column name="name" value="AUDITOR"/>
+            <column name="description" value="Auditor de bitácoras y logs del sistema"/>
+            <column name="active" valueBoolean="true"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
