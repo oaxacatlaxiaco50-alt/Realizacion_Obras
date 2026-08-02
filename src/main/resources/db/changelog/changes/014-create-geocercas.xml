@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20260715-014-create-geocercas" author="kevin">
+
+        <!-- Tabla principal de geocercas -->
+        <createTable tableName="geocercas">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="obra_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nombre" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descripcion" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- FK geocercas → obras -->
+        <addForeignKeyConstraint
+                baseTableName="geocercas"
+                baseColumnNames="obra_id"
+                referencedTableName="obras"
+                referencedColumnNames="id"
+                constraintName="fk_geocercas_obra"
+                onDelete="CASCADE"/>
+
+        <!-- Puntos del polígono de la geocerca -->
+        <createTable tableName="geocerca_puntos">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="geocerca_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="latitud" type="DECIMAL(10,7)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="longitud" type="DECIMAL(10,7)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="orden" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- FK geocerca_puntos → geocercas -->
+        <addForeignKeyConstraint
+                baseTableName="geocerca_puntos"
+                baseColumnNames="geocerca_id"
+                referencedTableName="geocercas"
+                referencedColumnNames="id"
+                constraintName="fk_geocerca_puntos_geocerca"
+                onDelete="CASCADE"/>
+
+    </changeSet>
+
+</databaseChangeLog>
