@@ -98,4 +98,36 @@ public class ObraController {
         Page<Obra> obrasPage = obraService.searchGlobal(q, pageable);
         return ResponseEntity.ok(obrasPage.map(mapper::toResponse));
     }
+
+    @GetMapping("/mapa")
+    @PreAuthorize("hasAuthority('OBRA_VIEW')")
+    @Operation(summary = "Mapa GeoJSON", description = "Retorna todas las obras con coordenadas en formato GeoJSON estándar, listo para Google Maps, Leaflet o Mapbox.")
+    public ResponseEntity<java.util.Map<String, Object>> getObrasParaMapa() {
+        java.util.List<Obra> obras = obraService.getObrasConCoordenadas();
+
+        java.util.List<java.util.Map<String, Object>> features = obras.stream().map(obra -> {
+            java.util.Map<String, Object> geometry = new java.util.LinkedHashMap<>();
+            geometry.put("type", "Point");
+            geometry.put("coordinates", new double[]{obra.getLongitud(), obra.getLatitud()});
+
+            java.util.Map<String, Object> properties = new java.util.LinkedHashMap<>();
+            properties.put("id", obra.getId());
+            properties.put("codigo", obra.getCodigo());
+            properties.put("nombre", obra.getNombre());
+            properties.put("estatus", obra.getEstatus().name());
+            properties.put("direccion", obra.getDireccion());
+
+            java.util.Map<String, Object> feature = new java.util.LinkedHashMap<>();
+            feature.put("type", "Feature");
+            feature.put("geometry", geometry);
+            feature.put("properties", properties);
+            return feature;
+        }).toList();
+
+        java.util.Map<String, Object> geoJson = new java.util.LinkedHashMap<>();
+        geoJson.put("type", "FeatureCollection");
+        geoJson.put("features", features);
+
+        return ResponseEntity.ok(geoJson);
+    }
 }

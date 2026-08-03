@@ -21,5 +21,8 @@
     <include file="db/changelog/changes/014-create-geocercas.xml"/>
     <include file="db/changelog/changes/015-create-rutas-obras.xml"/>
     <include file="db/changelog/changes/016-seed-geocerca-ruta-permissions.xml"/>
+    <include file="db/changelog/changes/017-add-geolocalizacion-to-obras.xml"/>
+    <include file="db/changelog/changes/018-create-obra-archivos.xml"/>
+    <include file="db/changelog/changes/019-create-avances-evidencias.xml"/>
 
 </databaseChangeLog>

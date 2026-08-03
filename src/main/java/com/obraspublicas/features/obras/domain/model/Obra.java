@@ -22,6 +22,9 @@ public class Obra {
     private LocalDate fechaFin;
     private ObraEstatus estatus;
     private Long responsableId;
+    private Double latitud;
+    private Double longitud;
+    private String direccion;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

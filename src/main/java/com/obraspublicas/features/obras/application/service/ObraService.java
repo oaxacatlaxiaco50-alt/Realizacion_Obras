@@ -50,6 +50,9 @@ public class ObraService {
                 .fechaFin(request.getFechaFin())
                 .estatus(request.getEstatus())
                 .responsableId(request.getResponsableId())
+                .latitud(request.getLatitud())
+                .longitud(request.getLongitud())
+                .direccion(request.getDireccion())
                 .build();
 
         Obra savedObra = obraRepository.save(obra);
@@ -123,6 +126,9 @@ public class ObraService {
         existingObra.setFechaInicio(request.getFechaInicio());
         existingObra.setFechaFin(request.getFechaFin());
         existingObra.setResponsableId(request.getResponsableId());
+        existingObra.setLatitud(request.getLatitud());
+        existingObra.setLongitud(request.getLongitud());
+        existingObra.setDireccion(request.getDireccion());
 
         Obra updatedObra = obraRepository.save(existingObra);
 
@@ -182,6 +188,12 @@ public class ObraService {
         return obraRepository.searchGlobal(keyword, pageable);
     }
 
+    public List<Obra> getObrasConCoordenadas() {
+        return obraRepository.findAll().stream()
+                .filter(o -> o.getLatitud() != null && o.getLongitud() != null)
+                .toList();
+    }
+
     private Obra cloneObra(Obra original) {
         return Obra.builder()
                 .id(original.getId())
@@ -193,6 +205,9 @@ public class ObraService {
                 .fechaFin(original.getFechaFin())
                 .estatus(original.getEstatus())
                 .responsableId(original.getResponsableId())
+                .latitud(original.getLatitud())
+                .longitud(original.getLongitud())
+                .direccion(original.getDireccion())
                 .createdAt(original.getCreatedAt())
                 .updatedAt(original.getUpdatedAt())
                 .build();
