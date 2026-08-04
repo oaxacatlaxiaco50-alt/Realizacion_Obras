@@ -38,11 +38,13 @@ El proyecto está diseñado bajo una arquitectura modular y limpia, organizada e
 src/main/java/com/obraspublicas/
 │
 ├── features/                           # Módulos y funcionalidades de negocio
+│   ├── archivos/                      # 📁 Gestión de carpetas y archivos por obra (Legal, Social, etc.)
 │   ├── audit/                         # Gestión de bitácoras y registros de auditoría
 │   ├── auth/                          # Proceso de inicio de sesión y emisión de JWT
+│   ├── avances/                       # 📊 Registro de avances, línea de tiempo y evidencias (fotos/videos)
 │   ├── expedientes/                   # Organización de carpetas y documentos de obras
 │   ├── geocercas/                     # Delimitación geográfica de perímetros de trabajo
-│   ├── obras/                         # CRUD y flujo de vida de obras públicas
+│   ├── obras/                         # CRUD, flujo de vida de obras públicas y 📍 geolocalización
 │   ├── permissions/                   # Definición de permisos atómicos
 │   ├── roles/                         # Roles de usuario (Admin, Supervisor, etc.)
 │   ├── rutas/                         # Registro de trazos de ruta para obras viales
@@ -150,6 +152,12 @@ Una vez que la aplicación esté ejecutándose, puedes explorar interactiva y vi
 | **Obras** | `/obras` | `POST /` (Crear obra) | `OBRA_CREATE` |
 | | | `GET /{id}` (Consultar) | `OBRA_VIEW` |
 | | | `PATCH /{id}/estatus` | `OBRA_CHANGE_STATUS` |
+| | | `GET /mapa` (🗺️ Obtener GeoJSON de obras) | `OBRA_VIEW` |
+| **Carpetas/Archivos**| `/obras/{id}/archivos` | `POST /` (Subir archivos) | `OBRA_UPDATE` |
+| | | `GET /` (Listar archivos por carpeta) | `OBRA_VIEW` |
+| **Avances** | `/obras/{id}/avances` | `POST /` (Crear reporte de avance) | `OBRA_UPDATE` |
+| | | `POST /{id}/evidencias` (Subir foto/video) | `OBRA_UPDATE` |
+| | | `GET /` (Línea de tiempo de avances) | `OBRA_VIEW` |
 | **Expedientes** | `/obras/{obraId}/expediente`| `GET /` (Ver catálogo) | `OBRA_VIEW` |
 | **Geocercas** | `/geocercas` | `POST /` (Crear geocerca) | `GEOCERCA_CREATE` |
 | **Rutas** | `/rutas` | `POST /` (Crear ruta) | `RUTA_CREATE` |
