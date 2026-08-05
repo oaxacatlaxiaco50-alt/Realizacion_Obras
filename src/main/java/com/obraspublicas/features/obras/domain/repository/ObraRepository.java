@@ -23,5 +23,7 @@ public interface ObraRepository {
             Pageable pageable
     );
     
+    java.util.List<Obra> findAll();
+
     Page<Obra> searchGlobal(String keyword, Pageable pageable);
 }

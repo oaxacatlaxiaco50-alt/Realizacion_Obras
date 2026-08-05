@@ -20,10 +20,10 @@ public class GeocercaPuntoEntity {
     @JoinColumn(name = "geocerca_id", nullable = false)
     private GeocercaEntity geocerca;
 
-    @Column(nullable = false, precision = 10, scale = 7)
+    @Column(nullable = false, columnDefinition = "numeric")
     private Double latitud;
 
-    @Column(nullable = false, precision = 10, scale = 7)
+    @Column(nullable = false, columnDefinition = "numeric")
     private Double longitud;
 
     @Column(nullable = false)

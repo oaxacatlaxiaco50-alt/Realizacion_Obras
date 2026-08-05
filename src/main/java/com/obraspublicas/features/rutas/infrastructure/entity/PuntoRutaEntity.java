@@ -20,10 +20,10 @@ public class PuntoRutaEntity {
     @JoinColumn(name = "ruta_id", nullable = false)
     private RutaObraEntity ruta;
 
-    @Column(nullable = false, precision = 10, scale = 7)
+    @Column(nullable = false, columnDefinition = "numeric")
     private Double latitud;
 
-    @Column(nullable = false, precision = 10, scale = 7)
+    @Column(nullable = false, columnDefinition = "numeric")
     private Double longitud;
 
     /** Posición secuencial del punto dentro de la ruta (0-based). Define el camino real, no línea directa */

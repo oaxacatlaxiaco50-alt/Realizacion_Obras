@@ -44,7 +44,7 @@ public class RutaObraService {
     @Transactional(readOnly = true)
     public RutaObra consultarRuta(Long id) {
         return rutaObraRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ruta no encontrada con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("RutaObra", "id", id));
     }
 
     /**
@@ -59,7 +59,7 @@ public class RutaObraService {
     @Transactional
     public RutaObra actualizarRuta(Long id, RutaObraUpdateRequest request) {
         RutaObra existente = rutaObraRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ruta no encontrada con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("RutaObra", "id", id));
 
         AtomicInteger orden = new AtomicInteger(0);
         List<PuntoRuta> puntos = request.getPuntos().stream()
@@ -80,7 +80,7 @@ public class RutaObraService {
     @Transactional
     public void eliminarRuta(Long id) {
         if (!rutaObraRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Ruta no encontrada con id: " + id);
+            throw new ResourceNotFoundException("RutaObra", "id", id);
         }
         rutaObraRepository.deleteById(id);
     }

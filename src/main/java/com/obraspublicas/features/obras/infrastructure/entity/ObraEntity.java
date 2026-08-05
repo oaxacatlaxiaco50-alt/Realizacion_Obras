@@ -45,4 +45,13 @@ public class ObraEntity extends Auditable {
 
     @Column(name = "responsable_id", nullable = false)
     private Long responsableId;
+
+    @Column(columnDefinition = "DOUBLE PRECISION")
+    private Double latitud;
+
+    @Column(columnDefinition = "DOUBLE PRECISION")
+    private Double longitud;
+
+    @Column(name = "direccion", length = 500)
+    private String direccion;
 }

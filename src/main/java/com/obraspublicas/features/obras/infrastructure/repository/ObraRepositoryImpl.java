@@ -92,4 +92,9 @@ public class ObraRepositoryImpl implements ObraRepository {
 
         return jpaRepository.findAll(spec, pageable).map(mapper::toDomain);
     }
+
+    @Override
+    public java.util.List<Obra> findAll() {
+        return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
+    }
 }

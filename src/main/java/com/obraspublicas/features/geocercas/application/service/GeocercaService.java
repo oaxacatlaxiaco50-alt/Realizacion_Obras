@@ -44,7 +44,7 @@ public class GeocercaService {
     @Transactional(readOnly = true)
     public Geocerca consultarGeocerca(Long id) {
         return geocercaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Geocerca no encontrada con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Geocerca", "id", id));
     }
 
     @Transactional(readOnly = true)
@@ -55,7 +55,7 @@ public class GeocercaService {
     @Transactional
     public Geocerca actualizarGeocerca(Long id, GeocercaUpdateRequest request) {
         Geocerca existente = geocercaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Geocerca no encontrada con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Geocerca", "id", id));
 
         AtomicInteger orden = new AtomicInteger(0);
         List<GeocercaPunto> puntos = request.getPuntos().stream()
@@ -76,7 +76,7 @@ public class GeocercaService {
     @Transactional
     public void eliminarGeocerca(Long id) {
         if (!geocercaRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Geocerca no encontrada con id: " + id);
+            throw new ResourceNotFoundException("Geocerca", "id", id);
         }
         geocercaRepository.deleteById(id);
     }

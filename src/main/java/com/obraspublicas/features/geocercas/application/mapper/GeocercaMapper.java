@@ -12,13 +12,12 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface GeocercaMapper {
 
-    @Mapping(target = "obraId", source = "obra.id")
+    @Mapping(target = "obraId", source = "obraId")
     Geocerca toDomain(GeocercaEntity entity);
 
     @Mapping(target = "geocercaId", source = "geocerca.id")
     GeocercaPunto toDomain(GeocercaPuntoEntity entity);
 
-    @Mapping(target = "obra.id", source = "obraId")
     @Mapping(target = "puntos", ignore = true)
     GeocercaEntity toEntity(Geocerca domain);
 

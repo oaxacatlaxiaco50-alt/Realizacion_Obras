@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="20260803-018-create-obra-archivos" author="jorge">
+        <createTable tableName="obra_archivos">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="obra_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_obra_archivos_obra_id" references="obras(id)"/>
+            </column>
+            <column name="carpeta" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nombre_original" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="archivo_url" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tipo_archivo" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tamanio_bytes" type="BIGINT"/>
+            <column name="subido_por" type="BIGINT">
+                <constraints nullable="true" foreignKeyName="fk_obra_archivos_subido_por" references="users(id)"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

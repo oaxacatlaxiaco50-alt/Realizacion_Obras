@@ -34,4 +34,15 @@ public class ObraUpdateRequest {
 
     @NotNull(message = "El responsableId es obligatorio")
     private Long responsableId;
+
+    @jakarta.validation.constraints.DecimalMin(value = "-90.0", message = "Latitud inválida")
+    @jakarta.validation.constraints.DecimalMax(value = "90.0", message = "Latitud inválida")
+    private Double latitud;
+
+    @jakarta.validation.constraints.DecimalMin(value = "-180.0", message = "Longitud inválida")
+    @jakarta.validation.constraints.DecimalMax(value = "180.0", message = "Longitud inválida")
+    private Double longitud;
+
+    @Size(max = 500, message = "La dirección no debe superar los 500 caracteres")
+    private String direccion;
 }
