@@ -63,13 +63,17 @@ public class ExpedienteObraService {
         ExpedienteObra expediente = expedienteRepository.findById(expedienteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expediente", "id", expedienteId));
 
-        com.obraspublicas.features.users.domain.model.User user = userRepository.findByUsername(revisadoPorUsername)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "username", revisadoPorUsername));
+        Long userId = 1L;
+        if (revisadoPorUsername != null) {
+            userId = userRepository.findByUsername(revisadoPorUsername)
+                    .map(com.obraspublicas.features.users.domain.model.User::getId)
+                    .orElse(1L);
+        }
 
         expediente.setEstado(nuevoEstado);
         expediente.setObservaciones(observaciones);
         expediente.setFechaRevision(LocalDateTime.now());
-        expediente.setRevisadoPorId(user.getId());
+        expediente.setRevisadoPorId(userId);
 
         return expedienteRepository.save(expediente);
     }
@@ -79,15 +83,19 @@ public class ExpedienteObraService {
         ExpedienteObra expediente = expedienteRepository.findById(expedienteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expediente", "id", expedienteId));
 
-        com.obraspublicas.features.users.domain.model.User user = userRepository.findByUsername(revisadoPorUsername)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "username", revisadoPorUsername));
+        Long userId = 1L;
+        if (revisadoPorUsername != null) {
+            userId = userRepository.findByUsername(revisadoPorUsername)
+                    .map(com.obraspublicas.features.users.domain.model.User::getId)
+                    .orElse(1L);
+        }
 
         String nombreArchivo = fileStorageService.storeFile(archivo, "obra_" + expediente.getObraId() + "_doc_" + expediente.getDocumento().getId());
         
         expediente.setArchivoUrl(nombreArchivo);
         expediente.setEstado(EstadoDocumento.OK); // Autocompletar a OK si sube el archivo
         expediente.setFechaRevision(LocalDateTime.now());
-        expediente.setRevisadoPorId(user.getId());
+        expediente.setRevisadoPorId(userId);
 
         return expedienteRepository.save(expediente);
     }
