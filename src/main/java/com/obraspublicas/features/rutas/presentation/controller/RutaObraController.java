@@ -28,24 +28,24 @@ public class RutaObraController {
     private final RutaObraMapper mapper;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('RUTA_CREATE')")
-    @Operation(summary = "Crear ruta", description = "Crea una nueva ruta de obra con su listado ordenado de coordenadas. Requiere RUTA_CREATE.")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR', 'CONTRATISTA') or hasAuthority('RUTA_CREATE') or hasAuthority('OBRA_CREATE') or hasAuthority('OBRA_UPDATE')")
+    @Operation(summary = "Crear ruta", description = "Crea una nueva ruta de obra con su listado ordenado de coordenadas.")
     public ResponseEntity<RutaObraResponse> crearRuta(@Valid @RequestBody RutaObraCreateRequest request) {
         RutaObra ruta = rutaObraService.crearRuta(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(ruta));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('RUTA_VIEW')")
-    @Operation(summary = "Consultar ruta", description = "Obtiene una ruta por su ID y su listado de coordenadas ordenadas. Requiere RUTA_VIEW.")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR', 'CONTRATISTA', 'AUDITOR') or hasAuthority('RUTA_VIEW') or hasAuthority('OBRA_VIEW')")
+    @Operation(summary = "Consultar ruta", description = "Obtiene una ruta por su ID y su listado de coordenadas ordenadas.")
     public ResponseEntity<RutaObraResponse> consultarRuta(@PathVariable Long id) {
         RutaObra ruta = rutaObraService.consultarRuta(id);
         return ResponseEntity.ok(mapper.toResponse(ruta));
     }
 
     @GetMapping("/obra/{obraId}")
-    @PreAuthorize("hasAuthority('RUTA_VIEW')")
-    @Operation(summary = "Listar rutas por obra", description = "Obtiene todas las rutas asociadas a una obra con sus coordenadas ordenadas para pintar el trazado real en el mapa. Requiere RUTA_VIEW.")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR', 'CONTRATISTA', 'AUDITOR') or hasAuthority('RUTA_VIEW') or hasAuthority('OBRA_VIEW')")
+    @Operation(summary = "Listar rutas por obra", description = "Obtiene todas las rutas asociadas a una obra con sus coordenadas ordenadas para pintar el trazado real en el mapa.")
     public ResponseEntity<List<RutaObraResponse>> consultarRutasPorObra(@PathVariable Long obraId) {
         List<RutaObraResponse> rutas = rutaObraService.consultarRutasPorObra(obraId)
                 .stream()
@@ -55,8 +55,8 @@ public class RutaObraController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('RUTA_UPDATE')")
-    @Operation(summary = "Actualizar ruta", description = "Actualiza los datos y coordenadas (puntos) de una ruta de obra existente. Requiere RUTA_UPDATE.")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR', 'CONTRATISTA') or hasAuthority('RUTA_UPDATE') or hasAuthority('OBRA_UPDATE')")
+    @Operation(summary = "Actualizar ruta", description = "Actualiza los datos y coordenadas (puntos) de una ruta de obra existente.")
     public ResponseEntity<RutaObraResponse> actualizarRuta(
             @PathVariable Long id,
             @Valid @RequestBody RutaObraUpdateRequest request
@@ -66,8 +66,8 @@ public class RutaObraController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('RUTA_DELETE')")
-    @Operation(summary = "Eliminar ruta", description = "Elimina una ruta y todos sus puntos en cascada. Requiere RUTA_DELETE.")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR') or hasAuthority('RUTA_DELETE') or hasAuthority('OBRA_DELETE')")
+    @Operation(summary = "Eliminar ruta", description = "Elimina una ruta y todos sus puntos en cascada.")
     public ResponseEntity<Void> eliminarRuta(@PathVariable Long id) {
         rutaObraService.eliminarRuta(id);
         return ResponseEntity.noContent().build();

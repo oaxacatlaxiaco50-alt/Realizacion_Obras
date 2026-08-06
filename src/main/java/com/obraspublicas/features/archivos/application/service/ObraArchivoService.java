@@ -49,10 +49,16 @@ public class ObraArchivoService {
     }
 
     public List<ObraArchivo> listarPorCarpeta(Long obraId, CarpetaTipo carpeta) {
-        if (carpeta != null) {
-            return repository.findByObraIdAndCarpeta(obraId, carpeta);
-        }
-        return repository.findByObraId(obraId);
+        List<ObraArchivo> list = (carpeta != null)
+                ? repository.findByObraIdAndCarpeta(obraId, carpeta)
+                : repository.findByObraId(obraId);
+
+        list.forEach(a -> {
+            if (a.getArchivoUrl() != null && !a.getArchivoUrl().startsWith("/uploads/")) {
+                a.setArchivoUrl("/uploads/" + a.getArchivoUrl());
+            }
+        });
+        return list;
     }
 
     public Map<String, Long> conteosPorCarpeta(Long obraId) {
