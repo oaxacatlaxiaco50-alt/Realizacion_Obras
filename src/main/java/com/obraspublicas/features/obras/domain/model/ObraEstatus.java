@@ -4,6 +4,7 @@ public enum ObraEstatus {
     PLANIFICADA,
     EN_PROCESO,
     FINALIZADA,
+    COMPLETADA,
     CANCELADA,
     INACTIVA
 }
