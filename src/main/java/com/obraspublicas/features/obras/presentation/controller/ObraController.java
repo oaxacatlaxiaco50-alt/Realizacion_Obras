@@ -49,8 +49,8 @@ public class ObraController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('OBRA_UPDATE')")
-    @Operation(summary = "Actualizar obra", description = "Modifica los detalles de una obra. Requiere permiso OBRA_UPDATE.")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR', 'CONTRATISTA') or hasAuthority('OBRA_UPDATE')")
+    @Operation(summary = "Actualizar obra", description = "Modifica los detalles de una obra.")
     public ResponseEntity<ObraResponse> actualizarObra(
             @PathVariable Long id,
             @Valid @RequestBody ObraUpdateRequest request
@@ -60,8 +60,8 @@ public class ObraController {
     }
 
     @PatchMapping("/{id}/estatus")
-    @PreAuthorize("hasAuthority('OBRA_CHANGE_STATUS')")
-    @Operation(summary = "Cambio de estatus de obra", description = "Permite cambiar el estatus de una obra (ej. PLANIFICADA, EN_PROCESO, CANCELADA, INACTIVA). Requiere permiso OBRA_CHANGE_STATUS.")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR', 'CONTRATISTA') or hasAuthority('OBRA_CHANGE_STATUS') or hasAuthority('OBRA_UPDATE')")
+    @Operation(summary = "Cambio de estatus de obra", description = "Permite cambiar el estatus de una obra (ej. PLANIFICADA, EN_PROCESO, CANCELADA, INACTIVA).")
     public ResponseEntity<ObraResponse> cambiarEstatus(
             @PathVariable Long id,
             @Valid @RequestBody ObraEstatusRequest request

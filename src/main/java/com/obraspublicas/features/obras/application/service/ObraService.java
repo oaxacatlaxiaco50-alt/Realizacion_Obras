@@ -86,53 +86,44 @@ public class ObraService {
         // Clonar datos anteriores para auditoría
         Obra oldObraCopy = cloneObra(existingObra);
 
-        // Validar responsable
-        userRepository.findById(request.getResponsableId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", request.getResponsableId()));
+        // Validar responsable si fue enviado
+        if (request.getResponsableId() != null) {
+            userRepository.findById(request.getResponsableId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", request.getResponsableId()));
+        }
 
         // Detectar cambios específicos para determinar acción y descripción de bitácora
         List<String> changeDetails = new ArrayList<>();
         String action = "MODIFICACION_OBRA";
 
-        if (!Objects.equals(existingObra.getResponsableId(), request.getResponsableId())) {
+        if (request.getResponsableId() != null && !Objects.equals(existingObra.getResponsableId(), request.getResponsableId())) {
             action = "ASIGNACION_RESPONSABLES";
             changeDetails.add("Responsable cambiado de " + existingObra.getResponsableId() + " a " + request.getResponsableId());
         }
 
-        boolean datesOrMontoChanged = !Objects.equals(existingObra.getMonto(), request.getMonto())
-                || !Objects.equals(existingObra.getFechaInicio(), request.getFechaInicio())
-                || !Objects.equals(existingObra.getFechaFin(), request.getFechaFin());
+        boolean datesOrMontoChanged = (request.getMonto() != null && !Objects.equals(existingObra.getMonto(), request.getMonto()))
+                || (request.getFechaInicio() != null && !Objects.equals(existingObra.getFechaInicio(), request.getFechaInicio()))
+                || (request.getFechaFin() != null && !Objects.equals(existingObra.getFechaFin(), request.getFechaFin()));
 
         if (datesOrMontoChanged) {
             action = "ACTUALIZACION_MONTOS_FECHAS";
-            if (!Objects.equals(existingObra.getMonto(), request.getMonto())) {
-                changeDetails.add("Monto cambiado de $" + existingObra.getMonto() + " a $" + request.getMonto());
-            }
-            if (!Objects.equals(existingObra.getFechaInicio(), request.getFechaInicio())) {
-                changeDetails.add("Fecha inicio cambiada de " + existingObra.getFechaInicio() + " a " + request.getFechaInicio());
-            }
-            if (!Objects.equals(existingObra.getFechaFin(), request.getFechaFin())) {
-                changeDetails.add("Fecha fin cambiada de " + existingObra.getFechaFin() + " a " + request.getFechaFin());
-            }
         }
 
         if (changeDetails.isEmpty()) {
             changeDetails.add("Actualización general de información");
         }
 
-        // Actualizar datos
-        existingObra.setNombre(request.getNombre());
-        existingObra.setDescripcion(request.getDescripcion());
-        existingObra.setMonto(request.getMonto());
-        existingObra.setFechaInicio(request.getFechaInicio());
-        existingObra.setFechaFin(request.getFechaFin());
-        existingObra.setResponsableId(request.getResponsableId());
-        existingObra.setLatitud(request.getLatitud());
-        existingObra.setLongitud(request.getLongitud());
-        existingObra.setDireccion(request.getDireccion());
-        if (request.getCategoria() != null) {
-            existingObra.setCategoria(request.getCategoria());
-        }
+        // Actualizar datos solo si vienen no nulos
+        if (request.getNombre() != null && !request.getNombre().isBlank()) existingObra.setNombre(request.getNombre());
+        if (request.getDescripcion() != null) existingObra.setDescripcion(request.getDescripcion());
+        if (request.getMonto() != null) existingObra.setMonto(request.getMonto());
+        if (request.getFechaInicio() != null) existingObra.setFechaInicio(request.getFechaInicio());
+        if (request.getFechaFin() != null) existingObra.setFechaFin(request.getFechaFin());
+        if (request.getResponsableId() != null) existingObra.setResponsableId(request.getResponsableId());
+        if (request.getLatitud() != null) existingObra.setLatitud(request.getLatitud());
+        if (request.getLongitud() != null) existingObra.setLongitud(request.getLongitud());
+        if (request.getDireccion() != null) existingObra.setDireccion(request.getDireccion());
+        if (request.getCategoria() != null) existingObra.setCategoria(request.getCategoria());
 
         Obra updatedObra = obraRepository.save(existingObra);
 
