@@ -25,6 +25,7 @@ public class ObraResponse {
     private Double latitud;
     private Double longitud;
     private String direccion;
+    private String categoria;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

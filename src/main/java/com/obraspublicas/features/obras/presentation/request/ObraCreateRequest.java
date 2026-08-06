@@ -53,4 +53,6 @@ public class ObraCreateRequest {
 
     @Size(max = 500, message = "La dirección no debe superar los 500 caracteres")
     private String direccion;
+
+    private String categoria;
 }

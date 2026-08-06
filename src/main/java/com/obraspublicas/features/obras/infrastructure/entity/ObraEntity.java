@@ -54,4 +54,7 @@ public class ObraEntity extends Auditable {
 
     @Column(name = "direccion", length = 500)
     private String direccion;
+
+    @Column(name = "categoria", length = 100)
+    private String categoria;
 }

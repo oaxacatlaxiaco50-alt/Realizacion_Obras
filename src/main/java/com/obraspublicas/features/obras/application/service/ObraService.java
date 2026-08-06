@@ -53,6 +53,7 @@ public class ObraService {
                 .latitud(request.getLatitud())
                 .longitud(request.getLongitud())
                 .direccion(request.getDireccion())
+                .categoria(request.getCategoria() != null ? request.getCategoria() : "Infraestructura General")
                 .build();
 
         Obra savedObra = obraRepository.save(obra);
@@ -129,6 +130,9 @@ public class ObraService {
         existingObra.setLatitud(request.getLatitud());
         existingObra.setLongitud(request.getLongitud());
         existingObra.setDireccion(request.getDireccion());
+        if (request.getCategoria() != null) {
+            existingObra.setCategoria(request.getCategoria());
+        }
 
         Obra updatedObra = obraRepository.save(existingObra);
 
@@ -208,6 +212,7 @@ public class ObraService {
                 .latitud(original.getLatitud())
                 .longitud(original.getLongitud())
                 .direccion(original.getDireccion())
+                .categoria(original.getCategoria())
                 .createdAt(original.getCreatedAt())
                 .updatedAt(original.getUpdatedAt())
                 .build();
