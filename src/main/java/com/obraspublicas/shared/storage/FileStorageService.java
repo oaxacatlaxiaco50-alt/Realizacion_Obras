@@ -43,4 +43,18 @@ public class FileStorageService {
             throw new RuntimeException("No se pudo guardar el archivo. Por favor, inténtelo de nuevo.", ex);
         }
     }
+
+    public org.springframework.core.io.Resource loadFileAsResource(String fileName) {
+        try {
+            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+            org.springframework.core.io.Resource resource = new org.springframework.core.io.UrlResource(filePath.toUri());
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("Archivo no encontrado o no legible: " + fileName);
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException("Archivo no encontrado: " + fileName, ex);
+        }
+    }
 }
