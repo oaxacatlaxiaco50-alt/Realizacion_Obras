@@ -39,7 +39,7 @@ public class ObraArchivoService {
                 .obraId(obraId)
                 .carpeta(carpeta)
                 .nombreOriginal(file.getOriginalFilename())
-                .archivoUrl(storedName)
+                .archivoUrl("/uploads/" + storedName)
                 .tipoArchivo(tipo)
                 .tamanioBytes(file.getSize())
                 .subidoPor(usuarioId)
