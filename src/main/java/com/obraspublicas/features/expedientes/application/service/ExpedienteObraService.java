@@ -34,25 +34,27 @@ public class ExpedienteObraService {
             throw new ResourceNotFoundException("Obra", "id", obraId);
         }
 
-        if (expedienteRepository.existsByObraId(obraId)) {
-            // Ya se generó previamente
-            return;
-        }
-
         List<CatalogoDocumento> catalogoActivo = catalogoRepository.findAllActive();
+        List<ExpedienteObra> existentes = expedienteRepository.findByObraId(obraId);
+        List<Long> idsExistentes = existentes.stream().map(e -> e.getDocumento().getId()).toList();
 
-        List<ExpedienteObra> expedientes = catalogoActivo.stream().map(cat -> 
-            ExpedienteObra.builder()
-                .obraId(obraId)
-                .documento(cat)
-                .estado(EstadoDocumento.FALTANTE) // Por defecto
-                .build()
-        ).collect(Collectors.toList());
+        List<ExpedienteObra> nuevos = catalogoActivo.stream()
+                .filter(cat -> !idsExistentes.contains(cat.getId()))
+                .map(cat -> ExpedienteObra.builder()
+                        .obraId(obraId)
+                        .documento(cat)
+                        .estado(EstadoDocumento.FALTANTE)
+                        .build()
+                ).collect(Collectors.toList());
 
-        expedienteRepository.saveAll(expedientes);
+        if (!nuevos.isEmpty()) {
+            expedienteRepository.saveAll(nuevos);
+        }
     }
 
+    @Transactional
     public List<ExpedienteObra> obtenerExpedientePorObra(Long obraId) {
+        generarExpedienteInicial(obraId);
         return expedienteRepository.findByObraId(obraId);
     }
 

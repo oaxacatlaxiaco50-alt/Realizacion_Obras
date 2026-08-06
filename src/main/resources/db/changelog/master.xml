@@ -25,5 +25,6 @@
     <include file="db/changelog/changes/018-create-obra-archivos.xml"/>
     <include file="db/changelog/changes/019-create-avances-evidencias.xml"/>
     <include file="db/changelog/changes/020-add-categoria-to-obras.xml"/>
+    <include file="db/changelog/changes/021-update-catalogo-documentos-oficial.xml"/>
 
 </databaseChangeLog>
