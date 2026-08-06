@@ -17,6 +17,7 @@ public interface ObraRepository {
             String codigo,
             String nombre,
             ObraEstatus estatus,
+            String categoria,
             Long responsableId,
             LocalDate startFechaInicio,
             LocalDate endFechaInicio,

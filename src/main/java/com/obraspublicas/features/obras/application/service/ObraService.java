@@ -180,12 +180,13 @@ public class ObraService {
             String codigo,
             String nombre,
             ObraEstatus estatus,
+            String categoria,
             Long responsableId,
             LocalDate startFechaInicio,
             LocalDate endFechaInicio,
             Pageable pageable
     ) {
-        return obraRepository.findAll(codigo, nombre, estatus, responsableId, startFechaInicio, endFechaInicio, pageable);
+        return obraRepository.findAll(codigo, nombre, estatus, categoria, responsableId, startFechaInicio, endFechaInicio, pageable);
     }
 
     public Page<Obra> searchGlobal(String keyword, Pageable pageable) {

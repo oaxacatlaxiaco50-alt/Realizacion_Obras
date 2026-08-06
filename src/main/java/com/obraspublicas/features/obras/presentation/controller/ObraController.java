@@ -77,13 +77,14 @@ public class ObraController {
             @RequestParam(required = false) String codigo,
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) ObraEstatus estatus,
+            @RequestParam(required = false) String categoria,
             @RequestParam(required = false) Long responsableId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startFechaInicio,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endFechaInicio,
-            @PageableDefault(size = 20, sort = "createdAt") Pageable pageable
+            @PageableDefault(size = 10, sort = "createdAt") Pageable pageable
     ) {
         Page<Obra> obrasPage = obraService.consultarObras(
-                codigo, nombre, estatus, responsableId, startFechaInicio, endFechaInicio, pageable
+                codigo, nombre, estatus, categoria, responsableId, startFechaInicio, endFechaInicio, pageable
         );
         return ResponseEntity.ok(obrasPage.map(mapper::toResponse));
     }

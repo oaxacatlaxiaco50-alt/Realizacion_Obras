@@ -48,6 +48,7 @@ public class ObraRepositoryImpl implements ObraRepository {
             String codigo,
             String nombre,
             ObraEstatus estatus,
+            String categoria,
             Long responsableId,
             LocalDate startFechaInicio,
             LocalDate endFechaInicio,
@@ -63,6 +64,9 @@ public class ObraRepositoryImpl implements ObraRepository {
         }
         if (estatus != null) {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("estatus"), estatus));
+        }
+        if (categoria != null && !categoria.trim().isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.equal(cb.lower(root.get("categoria")), categoria.toLowerCase().trim()));
         }
         if (responsableId != null) {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("responsableId"), responsableId));
