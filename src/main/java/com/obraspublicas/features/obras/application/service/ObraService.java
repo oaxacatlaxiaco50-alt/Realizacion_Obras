@@ -30,6 +30,7 @@ public class ObraService {
     private final UserRepository userRepository;
     private final AuditService auditService;
     private final ExpedienteObraService expedienteObraService;
+    private final com.obraspublicas.features.avances.infrastructure.repository.ObraAvanceJpaRepository obraAvanceJpaRepository;
 
     @Transactional
     public Obra registrarObra(ObraCreateRequest request) {
@@ -177,16 +178,34 @@ public class ObraService {
             LocalDate endFechaInicio,
             Pageable pageable
     ) {
-        return obraRepository.findAll(codigo, nombre, estatus, categoria, responsableId, startFechaInicio, endFechaInicio, pageable);
+        Page<Obra> page = obraRepository.findAll(codigo, nombre, estatus, categoria, responsableId, startFechaInicio, endFechaInicio, pageable);
+        page.forEach(this::enrichObraWithPorcentaje);
+        return page;
     }
 
     public Page<Obra> searchGlobal(String keyword, Pageable pageable) {
-        return obraRepository.searchGlobal(keyword, pageable);
+        Page<Obra> page = obraRepository.searchGlobal(keyword, pageable);
+        page.forEach(this::enrichObraWithPorcentaje);
+        return page;
+    }
+
+    private Obra enrichObraWithPorcentaje(Obra obra) {
+        if (obra == null) return null;
+        if (obra.getEstatus() == ObraEstatus.COMPLETADA || obra.getEstatus() == ObraEstatus.FINALIZADA) {
+            obra.setPorcentajeAvance(100);
+        } else {
+            Integer pct = obraAvanceJpaRepository.findFirstByObraIdOrderByPorcentajeDesc(obra.getId())
+                    .map(com.obraspublicas.features.avances.infrastructure.entity.ObraAvanceEntity::getPorcentaje)
+                    .orElse(0);
+            obra.setPorcentajeAvance(pct);
+        }
+        return obra;
     }
 
     public List<Obra> getObrasConCoordenadas() {
         return obraRepository.findAll().stream()
                 .filter(o -> o.getLatitud() != null && o.getLongitud() != null)
+                .peek(this::enrichObraWithPorcentaje)
                 .toList();
     }
 

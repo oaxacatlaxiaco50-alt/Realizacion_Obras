@@ -63,7 +63,11 @@ public class ObraRepositoryImpl implements ObraRepository {
             spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("nombre")), "%" + nombre.toLowerCase() + "%"));
         }
         if (estatus != null) {
-            spec = spec.and((root, query, cb) -> cb.equal(root.get("estatus"), estatus));
+            if (estatus == ObraEstatus.COMPLETADA || estatus == ObraEstatus.FINALIZADA) {
+                spec = spec.and((root, query, cb) -> root.get("estatus").in(ObraEstatus.COMPLETADA, ObraEstatus.FINALIZADA));
+            } else {
+                spec = spec.and((root, query, cb) -> cb.equal(root.get("estatus"), estatus));
+            }
         }
         if (categoria != null && !categoria.trim().isEmpty()) {
             spec = spec.and((root, query, cb) -> cb.equal(cb.lower(root.get("categoria")), categoria.toLowerCase().trim()));

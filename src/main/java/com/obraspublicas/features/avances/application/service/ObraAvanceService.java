@@ -23,6 +23,10 @@ public class ObraAvanceService {
 
     @Transactional
     public ObraAvance registrarAvance(ObraAvance avance) {
+        if (avance.getPorcentaje() != null) {
+            int pct = Math.max(0, Math.min(100, avance.getPorcentaje()));
+            avance.setPorcentaje(pct);
+        }
         return repository.save(avance);
     }
 
