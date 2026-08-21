@@ -28,7 +28,7 @@ public class ObraAvanceController {
     private final ObraAvanceService service;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('OBRA_UPDATE')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA') or hasAuthority('OBRA_UPDATE')")
     @Operation(summary = "Registrar nuevo avance")
     public ResponseEntity<ObraAvance> registrarAvance(
             @PathVariable Long obraId,
@@ -40,21 +40,21 @@ public class ObraAvanceController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('OBRA_VIEW')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA','AUDITOR') or hasAuthority('OBRA_VIEW')")
     @Operation(summary = "Listar avances cronológicamente (con sus evidencias)")
     public ResponseEntity<List<ObraAvance>> listar(@PathVariable Long obraId) {
         return ResponseEntity.ok(service.listarCronologico(obraId));
     }
 
     @GetMapping("/ultimo-porcentaje")
-    @PreAuthorize("hasAuthority('OBRA_VIEW')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA','AUDITOR') or hasAuthority('OBRA_VIEW')")
     @Operation(summary = "Obtener el último % de avance de la obra")
     public ResponseEntity<Integer> ultimoPorcentaje(@PathVariable Long obraId) {
         return ResponseEntity.ok(service.consultarUltimoPorcentaje(obraId));
     }
 
     @PostMapping(value = "/{avanceId}/evidencias", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAuthority('OBRA_UPDATE')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA') or hasAuthority('OBRA_UPDATE')")
     @Operation(summary = "Subir foto o video como evidencia a un avance")
     public ResponseEntity<AvanceEvidencia> subirEvidencia(
             @PathVariable Long obraId,
@@ -67,7 +67,7 @@ public class ObraAvanceController {
     }
 
     @DeleteMapping("/{avanceId}")
-    @PreAuthorize("hasAuthority('OBRA_UPDATE')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA') or hasAuthority('OBRA_UPDATE')")
     @Operation(summary = "Eliminar avance completo")
     public ResponseEntity<Void> eliminarAvance(
             @PathVariable Long obraId,
@@ -78,7 +78,7 @@ public class ObraAvanceController {
     }
 
     @DeleteMapping("/evidencias/{evidenciaId}")
-    @PreAuthorize("hasAuthority('OBRA_UPDATE')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA') or hasAuthority('OBRA_UPDATE')")
     @Operation(summary = "Eliminar una evidencia")
     public ResponseEntity<Void> eliminarEvidencia(
             @PathVariable Long obraId,

@@ -33,7 +33,7 @@ public class ObraController {
     private final ObraMapper mapper;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('OBRA_CREATE')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR') or hasAuthority('OBRA_CREATE')")
     @Operation(summary = "Registrar obra", description = "Registra una nueva obra en el sistema. Requiere permiso OBRA_CREATE.")
     public ResponseEntity<ObraResponse> registrarObra(@Valid @RequestBody ObraCreateRequest request) {
         Obra obra = obraService.registrarObra(request);
@@ -41,7 +41,7 @@ public class ObraController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('OBRA_VIEW')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA','AUDITOR') or hasAuthority('OBRA_VIEW')")
     @Operation(summary = "Consultar obra", description = "Obtiene los detalles de una obra por su ID. Requiere permiso OBRA_VIEW.")
     public ResponseEntity<ObraResponse> consultarObra(@PathVariable Long id) {
         Obra obra = obraService.consultarObra(id);
@@ -71,7 +71,7 @@ public class ObraController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('OBRA_VIEW')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA','AUDITOR') or hasAuthority('OBRA_VIEW')")
     @Operation(summary = "Consulta paginada y filtrada", description = "Obtiene una lista paginada de obras filtradas por diversos criterios. Requiere permiso OBRA_VIEW.")
     public ResponseEntity<Page<ObraResponse>> consultarObras(
             @RequestParam(required = false) String codigo,
@@ -90,7 +90,7 @@ public class ObraController {
     }
 
     @GetMapping("/search")
-    @PreAuthorize("hasAuthority('OBRA_VIEW')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA','AUDITOR') or hasAuthority('OBRA_VIEW')")
     @Operation(summary = "Búsqueda global", description = "Busca obras por una palabra clave que coincida en código, nombre o descripción.")
     public ResponseEntity<Page<ObraResponse>> buscarObras(
             @RequestParam String q,
@@ -101,7 +101,7 @@ public class ObraController {
     }
 
     @GetMapping("/mapa")
-    @PreAuthorize("hasAuthority('OBRA_VIEW')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA','AUDITOR') or hasAuthority('OBRA_VIEW')")
     @Operation(summary = "Mapa GeoJSON", description = "Retorna todas las obras con coordenadas en formato GeoJSON estándar, listo para Google Maps, Leaflet o Mapbox.")
     public ResponseEntity<java.util.Map<String, Object>> getObrasParaMapa() {
         java.util.List<Obra> obras = obraService.getObrasConCoordenadas();

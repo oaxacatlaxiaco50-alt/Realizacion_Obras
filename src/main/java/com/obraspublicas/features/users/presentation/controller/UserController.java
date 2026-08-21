@@ -33,7 +33,7 @@ public class UserController {
     // AUDITOR       → ❌ acceso denegado
     // ─────────────────────────────────────────────────────
     @GetMapping
-    @PreAuthorize("hasAuthority('USER_VIEW')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasAuthority('USER_VIEW')")
     @Operation(
         summary = "Listar usuarios",
         description = "Retorna la lista completa de usuarios. Requiere permiso USER_VIEW (ADMINISTRADOR, SUPERVISOR)."
@@ -50,7 +50,7 @@ public class UserController {
     // AUDITOR       → ❌ acceso denegado
     // ─────────────────────────────────────────────────────
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('USER_VIEW')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasAuthority('USER_VIEW')")
     @Operation(
         summary = "Obtener usuario por ID",
         description = "Retorna el detalle de un usuario por su ID. Requiere permiso USER_VIEW."
@@ -67,7 +67,7 @@ public class UserController {
     // AUDITOR       → ❌ acceso denegado
     // ─────────────────────────────────────────────────────
     @PostMapping
-    @PreAuthorize("hasAuthority('USER_CREATE')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasAuthority('USER_CREATE')")
     @Operation(
         summary = "Crear usuario",
         description = "Crea un nuevo usuario en el sistema con los roles especificados. Requiere permiso USER_CREATE (solo ADMINISTRADOR)."
@@ -85,7 +85,7 @@ public class UserController {
     // AUDITOR       → ❌ acceso denegado
     // ─────────────────────────────────────────────────────
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasAuthority('USER_UPDATE')")
     @Operation(
         summary = "Actualizar usuario",
         description = "Actualiza los datos de un usuario existente. Requiere permiso USER_UPDATE (solo ADMINISTRADOR)."
@@ -108,7 +108,7 @@ public class UserController {
     // la integridad de los registros de auditoría históricos.
     // ─────────────────────────────────────────────────────
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('USER_DELETE')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasAuthority('USER_DELETE')")
     @Operation(
         summary = "Desactivar usuario",
         description = "Desactiva un usuario del sistema (soft delete). No se elimina de la BD. Requiere permiso USER_DELETE (solo ADMINISTRADOR)."
@@ -126,7 +126,7 @@ public class UserController {
     // AUDITOR       → ❌ acceso denegado
     // ─────────────────────────────────────────────────────
     @PatchMapping("/{id}/reactivar")
-    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasAuthority('USER_UPDATE')")
     @Operation(
         summary = "Reactivar usuario",
         description = "Reactiva un usuario que había sido desactivado. Requiere permiso USER_UPDATE (solo ADMINISTRADOR)."

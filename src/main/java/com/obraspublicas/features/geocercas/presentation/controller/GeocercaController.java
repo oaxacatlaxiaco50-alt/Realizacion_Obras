@@ -28,7 +28,7 @@ public class GeocercaController {
     private final GeocercaMapper mapper;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('GEOCERCA_CREATE')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR') or hasAuthority('GEOCERCA_CREATE')")
     @Operation(summary = "Crear geocerca", description = "Crea una nueva geocerca (polígono de puntos) asociada a una obra. Requiere GEOCERCA_CREATE.")
     public ResponseEntity<GeocercaResponse> crearGeocerca(@Valid @RequestBody GeocercaCreateRequest request) {
         Geocerca geocerca = geocercaService.crearGeocerca(request);
@@ -36,7 +36,7 @@ public class GeocercaController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('GEOCERCA_VIEW')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA','AUDITOR') or hasAuthority('GEOCERCA_VIEW')")
     @Operation(summary = "Consultar geocerca", description = "Obtiene una geocerca por su ID junto con todos sus puntos. Requiere GEOCERCA_VIEW.")
     public ResponseEntity<GeocercaResponse> consultarGeocerca(@PathVariable Long id) {
         Geocerca geocerca = geocercaService.consultarGeocerca(id);
@@ -44,7 +44,7 @@ public class GeocercaController {
     }
 
     @GetMapping("/obra/{obraId}")
-    @PreAuthorize("hasAuthority('GEOCERCA_VIEW')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA','AUDITOR') or hasAuthority('GEOCERCA_VIEW')")
     @Operation(summary = "Listar geocercas por obra", description = "Obtiene todas las geocercas asociadas a una obra. Requiere GEOCERCA_VIEW.")
     public ResponseEntity<List<GeocercaResponse>> consultarGeocercasPorObra(@PathVariable Long obraId) {
         List<GeocercaResponse> geocercas = geocercaService.consultarGeocercasPorObra(obraId)
@@ -55,7 +55,7 @@ public class GeocercaController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('GEOCERCA_UPDATE')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR') or hasAuthority('GEOCERCA_UPDATE')")
     @Operation(summary = "Actualizar geocerca", description = "Actualiza los datos y los puntos de una geocerca existente. Requiere GEOCERCA_UPDATE.")
     public ResponseEntity<GeocercaResponse> actualizarGeocerca(
             @PathVariable Long id,
@@ -66,7 +66,7 @@ public class GeocercaController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('GEOCERCA_DELETE')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasAuthority('GEOCERCA_DELETE')")
     @Operation(summary = "Eliminar geocerca", description = "Elimina una geocerca y todos sus puntos en cascada. Requiere GEOCERCA_DELETE.")
     public ResponseEntity<Void> eliminarGeocerca(@PathVariable Long id) {
         geocercaService.eliminarGeocerca(id);

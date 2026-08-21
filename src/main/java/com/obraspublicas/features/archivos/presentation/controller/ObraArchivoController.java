@@ -28,7 +28,7 @@ public class ObraArchivoController {
     private final ObraArchivoService service;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAuthority('OBRA_UPDATE')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA') or hasAuthority('OBRA_UPDATE')")
     @Operation(summary = "Subir archivo a una carpeta")
     public ResponseEntity<ObraArchivo> subirArchivo(
             @PathVariable Long obraId,
@@ -41,7 +41,7 @@ public class ObraArchivoController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('OBRA_VIEW')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA','AUDITOR') or hasAuthority('OBRA_VIEW')")
     @Operation(summary = "Listar archivos de una carpeta (o todas)")
     public ResponseEntity<List<ObraArchivo>> listar(
             @PathVariable Long obraId,
@@ -51,14 +51,14 @@ public class ObraArchivoController {
     }
 
     @GetMapping("/conteos")
-    @PreAuthorize("hasAuthority('OBRA_VIEW')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA','AUDITOR') or hasAuthority('OBRA_VIEW')")
     @Operation(summary = "Contador de archivos por cada carpeta")
     public ResponseEntity<Map<String, Long>> conteos(@PathVariable Long obraId) {
         return ResponseEntity.ok(service.conteosPorCarpeta(obraId));
     }
 
     @DeleteMapping("/{archivoId}")
-    @PreAuthorize("hasAuthority('OBRA_UPDATE')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA') or hasAuthority('OBRA_UPDATE')")
     @Operation(summary = "Eliminar un archivo")
     public ResponseEntity<Void> eliminar(
             @PathVariable Long obraId,

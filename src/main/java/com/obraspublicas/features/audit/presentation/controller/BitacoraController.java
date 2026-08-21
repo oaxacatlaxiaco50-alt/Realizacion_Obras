@@ -26,7 +26,7 @@ public class BitacoraController {
     private final AuditMapper mapper;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('BITACORA_VIEW')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('SUPERVISOR') or hasAuthority('BITACORA_VIEW')")
     @Operation(summary = "Consultar bitácoras de obras", description = "Devuelve el listado paginado de entradas de bitácora. Permite filtrar opcionalmente por obraId.")
     public ResponseEntity<Page<BitacoraResponse>> getBitacoras(
             @RequestParam(required = false) Long obraId,

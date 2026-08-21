@@ -26,7 +26,7 @@ public class AuditController {
     private final AuditMapper mapper;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('AUDIT_VIEW')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasAuthority('AUDIT_VIEW')")
     @Operation(summary = "Consultar logs de auditoría", description = "Devuelve el listado paginado de logs de auditoría general. Permite filtrar opcionalmente por usuario.")
     public ResponseEntity<Page<AuditLogResponse>> getAuditLogs(
             @RequestParam(required = false) String username,
