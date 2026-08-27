@@ -25,6 +25,10 @@ public class ObraAvanceService {
     public ObraAvance registrarAvance(ObraAvance avance) {
         if (avance.getPorcentaje() != null) {
             int pct = Math.max(0, Math.min(100, avance.getPorcentaje()));
+            Integer ultimoPct = consultarUltimoPorcentaje(avance.getObraId());
+            if (pct < ultimoPct) {
+                throw new IllegalArgumentException("El porcentaje de avance (" + pct + "%) no puede ser menor al avance actual (" + ultimoPct + "%).");
+            }
             avance.setPorcentaje(pct);
         }
         return repository.save(avance);

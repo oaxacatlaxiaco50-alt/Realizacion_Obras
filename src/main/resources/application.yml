@@ -3,6 +3,10 @@ spring:
     active: dev
   application:
     name: obras-publicas-api
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
 
 server:
   port: 8081
