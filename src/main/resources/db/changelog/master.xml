@@ -27,5 +27,6 @@
     <include file="db/changelog/changes/020-add-categoria-to-obras.xml"/>
     <include file="db/changelog/changes/021-update-catalogo-documentos-oficial.xml"/>
     <include file="db/changelog/changes/022-create-notificaciones.xml"/>
+    <include file="db/changelog/changes/023-create-obras-metas.xml"/>
 
 </databaseChangeLog>

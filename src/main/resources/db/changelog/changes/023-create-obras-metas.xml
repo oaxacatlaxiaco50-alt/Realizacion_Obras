@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20260904-create-obras-metas" author="antigravity">
+        <validCheckSum>ANY</validCheckSum>
+        <createTable tableName="obra_metas">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="obra_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="concepto" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unidad_medida" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cantidad_meta" type="DOUBLE PRECISION">
+                <constraints nullable="false"/>
+            </column>
+            <column name="avance_acumulado" type="DOUBLE PRECISION" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="porcentaje" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="estado" type="VARCHAR(50)" defaultValue="PENDIENTE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+        <addColumn tableName="obra_avances">
+            <column name="meta_id" type="BIGINT"/>
+            <column name="cantidad_ejecutada" type="DOUBLE PRECISION"/>
+            <column name="acumulado_actual" type="DOUBLE PRECISION"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseTableName="obra_metas" baseColumnNames="obra_id"
+                                 constraintName="fk_obras_metas_obra"
+                                 referencedTableName="obras" referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="obra_avances" baseColumnNames="meta_id"
+                                 constraintName="fk_obra_avances_meta"
+                                 referencedTableName="obra_metas" referencedColumnNames="id"
+                                 onDelete="SET NULL"/>
+    </changeSet>
+
+</databaseChangeLog>

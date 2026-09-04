@@ -78,6 +78,9 @@ public class ObraAvanceRepositoryImpl implements ObraAvanceRepository {
                 .porcentaje(e.getPorcentaje())
                 .observaciones(e.getObservaciones())
                 .registradoPor(e.getRegistradoPor())
+                .metaId(e.getMetaId())
+                .cantidadEjecutada(e.getCantidadEjecutada())
+                .acumuladoActual(e.getAcumuladoActual())
                 .createdAt(e.getCreatedAt())
                 .build();
         if (e.getEvidencias() != null) {
@@ -107,6 +110,9 @@ public class ObraAvanceRepositoryImpl implements ObraAvanceRepository {
                 .porcentaje(d.getPorcentaje())
                 .observaciones(d.getObservaciones())
                 .registradoPor(d.getRegistradoPor())
+                .metaId(d.getMetaId())
+                .cantidadEjecutada(d.getCantidadEjecutada())
+                .acumuladoActual(d.getAcumuladoActual())
                 .build();
     }
 }

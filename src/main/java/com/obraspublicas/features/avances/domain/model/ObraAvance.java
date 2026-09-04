@@ -18,6 +18,9 @@ public class ObraAvance {
     private Integer porcentaje;
     private String observaciones;
     private Long registradoPor;
+    private Long metaId;
+    private Double cantidadEjecutada;
+    private Double acumuladoActual;
     private LocalDateTime createdAt;
     private List<AvanceEvidencia> evidencias;
 }

@@ -40,6 +40,15 @@ public class ObraAvanceEntity {
     @Column(name = "registrado_por")
     private Long registradoPor;
 
+    @Column(name = "meta_id")
+    private Long metaId;
+
+    @Column(name = "cantidad_ejecutada")
+    private Double cantidadEjecutada;
+
+    @Column(name = "acumulado_actual")
+    private Double acumuladoActual;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

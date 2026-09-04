@@ -5,6 +5,9 @@ import com.obraspublicas.features.avances.domain.model.FaseEvidencia;
 import com.obraspublicas.features.avances.domain.model.ObraAvance;
 import com.obraspublicas.features.avances.domain.model.TipoEvidencia;
 import com.obraspublicas.features.avances.domain.repository.ObraAvanceRepository;
+import com.obraspublicas.features.obras.domain.model.ObraMeta;
+import com.obraspublicas.features.obras.domain.model.ObraMetaEstado;
+import com.obraspublicas.features.obras.domain.repository.ObraMetaRepository;
 import com.obraspublicas.shared.exception.ResourceNotFoundException;
 import com.obraspublicas.shared.storage.FileStorageService;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +22,43 @@ import java.util.List;
 public class ObraAvanceService {
 
     private final ObraAvanceRepository repository;
+    private final ObraMetaRepository metaRepository;
     private final FileStorageService fileStorageService;
 
     @Transactional
     public ObraAvance registrarAvance(ObraAvance avance) {
+        if (avance.getMetaId() != null) {
+            ObraMeta meta = metaRepository.findById(avance.getMetaId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Meta", "id", avance.getMetaId()));
+            
+            if (avance.getCantidadEjecutada() == null || avance.getCantidadEjecutada() <= 0) {
+                throw new IllegalArgumentException("La cantidad ejecutada debe ser mayor a 0.");
+            }
+            
+            Double nuevoAcumulado = (meta.getAvanceAcumulado() != null ? meta.getAvanceAcumulado() : 0.0) + avance.getCantidadEjecutada();
+            
+            if (nuevoAcumulado > meta.getCantidadMeta()) {
+                throw new IllegalArgumentException("El avance no puede superar la meta total (" + meta.getCantidadMeta() + ").");
+            }
+            
+            meta.setAvanceAcumulado(nuevoAcumulado);
+            
+            int porcentajeMeta = (int) Math.round((nuevoAcumulado / meta.getCantidadMeta()) * 100);
+            meta.setPorcentaje(porcentajeMeta);
+            
+            if (porcentajeMeta >= 100) {
+                meta.setEstado(ObraMetaEstado.COMPLETADO);
+            } else if (nuevoAcumulado > 0) {
+                meta.setEstado(ObraMetaEstado.EN_PROCESO);
+            } else {
+                meta.setEstado(ObraMetaEstado.PENDIENTE);
+            }
+            
+            metaRepository.save(meta);
+            
+            avance.setAcumuladoActual(nuevoAcumulado);
+        }
+
         if (avance.getPorcentaje() != null) {
             int pct = Math.max(0, Math.min(100, avance.getPorcentaje()));
             Integer ultimoPct = consultarUltimoPorcentaje(avance.getObraId());
