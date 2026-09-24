@@ -34,4 +34,26 @@ public class ObraMetaService {
     public void eliminarMeta(Long id) {
         repository.deleteById(id);
     }
+
+    @Transactional
+    public ObraMeta actualizarAvance(Long metaId, Double cantidadAvanzada, String descripcion) {
+        ObraMeta meta = repository.findById(metaId)
+            .orElseThrow(() -> new RuntimeException("Meta no encontrada"));
+        
+        meta.setAvanceAcumulado(meta.getAvanceAcumulado() + cantidadAvanzada);
+        if (meta.getAvanceAcumulado() > meta.getCantidadMeta()) {
+            meta.setAvanceAcumulado(meta.getCantidadMeta());
+        }
+        
+        int nuevoPorcentaje = (int) Math.round((meta.getAvanceAcumulado() / meta.getCantidadMeta()) * 100);
+        meta.setPorcentaje(nuevoPorcentaje);
+        
+        if (nuevoPorcentaje == 100) {
+            meta.setEstado(ObraMetaEstado.COMPLETADO);
+        } else if (nuevoPorcentaje > 0) {
+            meta.setEstado(ObraMetaEstado.EN_PROCESO);
+        }
+        
+        return repository.save(meta);
+    }
 }

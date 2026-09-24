@@ -5,6 +5,7 @@ import com.obraspublicas.features.geocercas.domain.model.GeocercaPunto;
 import com.obraspublicas.features.geocercas.domain.repository.GeocercaRepository;
 import com.obraspublicas.features.geocercas.presentation.request.GeocercaCreateRequest;
 import com.obraspublicas.features.geocercas.presentation.request.GeocercaUpdateRequest;
+import com.obraspublicas.features.audit.application.service.AuditService;
 import com.obraspublicas.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class GeocercaService {
 
     private final GeocercaRepository geocercaRepository;
+    private final AuditService auditService;
 
     @Transactional
     public Geocerca crearGeocerca(GeocercaCreateRequest request) {
@@ -38,7 +40,15 @@ public class GeocercaService {
                 .puntos(puntos)
                 .build();
 
-        return geocercaRepository.save(geocerca);
+        Geocerca saved = geocercaRepository.save(geocerca);
+
+        auditService.registrarEvento(
+            request.getObraId(),
+            "CREACION_GEOCERCA",
+            "Se definió una nueva geocerca \"" + request.getNombre() + "\" con " + request.getPuntos().size() + " puntos",
+            "OK", null, saved
+        );
+        return saved;
     }
 
     @Transactional(readOnly = true)
@@ -70,14 +80,27 @@ public class GeocercaService {
         existente.setDescripcion(request.getDescripcion());
         existente.setPuntos(puntos);
 
-        return geocercaRepository.save(existente);
+        Geocerca saved = geocercaRepository.save(existente);
+
+        auditService.registrarEvento(
+            existente.getObraId(),
+            "MODIFICACION_GEOCERCA",
+            "Se modificó la geocerca \"" + request.getNombre() + "\"",
+            "OK", null, saved
+        );
+        return saved;
     }
 
     @Transactional
     public void eliminarGeocerca(Long id) {
-        if (!geocercaRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Geocerca", "id", id);
-        }
+        Geocerca geocerca = geocercaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Geocerca", "id", id));
         geocercaRepository.deleteById(id);
+        auditService.registrarEvento(
+            geocerca.getObraId(),
+            "ELIMINACION_GEOCERCA",
+            "Se eliminó la geocerca \"" + geocerca.getNombre() + "\"",
+            "OK", geocerca, null
+        );
     }
 }

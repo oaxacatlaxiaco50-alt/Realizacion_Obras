@@ -18,4 +18,6 @@ public class AuditLog {
     private String ip;
     private String previousData;
     private String newData;
+    private Long obraId;
+    private String description;
 }

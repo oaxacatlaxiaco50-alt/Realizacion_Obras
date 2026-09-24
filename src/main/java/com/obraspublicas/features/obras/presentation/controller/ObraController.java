@@ -81,7 +81,7 @@ public class ObraController {
             @RequestParam(required = false) Long responsableId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startFechaInicio,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endFechaInicio,
-            @PageableDefault(size = 10, sort = "createdAt") Pageable pageable
+            @PageableDefault(size = 10, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable
     ) {
         Page<Obra> obrasPage = obraService.consultarObras(
                 codigo, nombre, estatus, categoria, responsableId, startFechaInicio, endFechaInicio, pageable
@@ -94,7 +94,7 @@ public class ObraController {
     @Operation(summary = "Búsqueda global", description = "Busca obras por una palabra clave que coincida en código, nombre o descripción.")
     public ResponseEntity<Page<ObraResponse>> buscarObras(
             @RequestParam String q,
-            @PageableDefault(size = 20, sort = "createdAt") Pageable pageable
+            @PageableDefault(size = 20, sort = "createdAt", direction = org.springframework.data.domain.Sort.Direction.DESC) Pageable pageable
     ) {
         Page<Obra> obrasPage = obraService.searchGlobal(q, pageable);
         return ResponseEntity.ok(obrasPage.map(mapper::toResponse));

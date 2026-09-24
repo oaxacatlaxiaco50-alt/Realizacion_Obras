@@ -39,6 +39,12 @@ public class AuditLogEntity {
     @Column(name = "new_data", columnDefinition = "TEXT")
     private String newData;
 
+    @Column(name = "obra_id")
+    private Long obraId;
+
+    @Column(name = "description", length = 500)
+    private String description;
+
     @PrePersist
     protected void onCreate() {
         this.timestamp = LocalDateTime.now();

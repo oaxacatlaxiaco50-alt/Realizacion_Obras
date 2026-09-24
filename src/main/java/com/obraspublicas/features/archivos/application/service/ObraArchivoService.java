@@ -4,6 +4,7 @@ import com.obraspublicas.features.archivos.domain.model.CarpetaTipo;
 import com.obraspublicas.features.archivos.domain.model.ObraArchivo;
 import com.obraspublicas.features.archivos.domain.model.TipoArchivo;
 import com.obraspublicas.features.archivos.domain.repository.ObraArchivoRepository;
+import com.obraspublicas.features.audit.application.service.AuditService;
 import com.obraspublicas.shared.exception.ResourceNotFoundException;
 import com.obraspublicas.shared.storage.FileStorageService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,14 @@ public class ObraArchivoService {
 
     private final ObraArchivoRepository repository;
     private final FileStorageService fileStorageService;
+    private final AuditService auditService;
+
+    private static final Map<CarpetaTipo, String> NOMBRE_CARPETA = Map.of(
+        CarpetaTipo.LEGAL,            "Documentos Legales",
+        CarpetaTipo.SOCIAL,           "Parte Social",
+        CarpetaTipo.TECNICOS,         "Documentos Técnicos",
+        CarpetaTipo.ANEXO_FOTOGRAFICO,"Evidencia Fotográfica"
+    );
 
     @Transactional
     public ObraArchivo subirArchivo(Long obraId, CarpetaTipo carpeta, MultipartFile file, Long usuarioId) {
@@ -45,7 +54,19 @@ public class ObraArchivoService {
                 .subidoPor(usuarioId)
                 .build();
 
-        return repository.save(archivo);
+        ObraArchivo saved = repository.save(archivo);
+
+        String seccion = NOMBRE_CARPETA.getOrDefault(carpeta, carpeta.name());
+        auditService.registrarEvento(
+            obraId,
+            "SUBIDA_ARCHIVO",
+            "Se subió el archivo \"" + file.getOriginalFilename() + "\" en la sección: " + seccion,
+            "OK",
+            null,
+            saved
+        );
+
+        return saved;
     }
 
     public List<ObraArchivo> listarPorCarpeta(Long obraId, CarpetaTipo carpeta) {
@@ -70,9 +91,21 @@ public class ObraArchivoService {
 
     @Transactional
     public void eliminarArchivo(Long archivoId) {
-        if (!repository.existsById(archivoId)) {
-            throw new ResourceNotFoundException("Archivo", "id", archivoId);
-        }
+        ObraArchivo archivo = repository.findById(archivoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Archivo", "id", archivoId));
+        String nombreArchivo = archivo.getNombreOriginal();
+        String seccion = NOMBRE_CARPETA.getOrDefault(archivo.getCarpeta(), archivo.getCarpeta().name());
+        Long obraId = archivo.getObraId();
+
         repository.deleteById(archivoId);
+
+        auditService.registrarEvento(
+            obraId,
+            "ELIMINACION_ARCHIVO",
+            "Se eliminó el archivo \"" + nombreArchivo + "\" de la sección: " + seccion,
+            "OK",
+            archivo,
+            null
+        );
     }
 }

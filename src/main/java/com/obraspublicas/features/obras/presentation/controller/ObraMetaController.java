@@ -34,4 +34,14 @@ public class ObraMetaController {
         service.eliminarMeta(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/avance")
+    public ResponseEntity<ObraMeta> actualizarAvance(
+            @PathVariable Long obraId,
+            @PathVariable Long id,
+            @RequestParam Double cantidadAvanzada,
+            @RequestParam(required = false) String descripcion) {
+        ObraMeta updated = service.actualizarAvance(id, cantidadAvanzada, descripcion);
+        return ResponseEntity.ok(updated);
+    }
 }

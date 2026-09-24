@@ -6,6 +6,7 @@ import com.obraspublicas.features.expedientes.domain.model.ExpedienteObra;
 import com.obraspublicas.features.expedientes.domain.repository.CatalogoDocumentoRepository;
 import com.obraspublicas.features.expedientes.domain.repository.ExpedienteObraRepository;
 import com.obraspublicas.features.obras.domain.repository.ObraRepository;
+import com.obraspublicas.features.audit.application.service.AuditService;
 import com.obraspublicas.features.users.domain.repository.UserRepository;
 import com.obraspublicas.shared.exception.ResourceNotFoundException;
 import com.obraspublicas.shared.storage.FileStorageService;
@@ -27,6 +28,7 @@ public class ExpedienteObraService {
     private final ObraRepository obraRepository;
     private final FileStorageService fileStorageService;
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
     @Transactional
     public void generarExpedienteInicial(Long obraId) {
@@ -75,7 +77,19 @@ public class ExpedienteObraService {
         expediente.setFechaRevision(LocalDateTime.now());
         expediente.setRevisadoPorId(userId);
 
-        return expedienteRepository.save(expediente);
+        ExpedienteObra saved = expedienteRepository.save(expediente);
+
+        String nombreDoc = expediente.getDocumento() != null ? expediente.getDocumento().getNombre() : "documento";
+        auditService.registrarEvento(
+            expediente.getObraId(),
+            "ACTUALIZACION_CHECKLIST",
+            "Se actualizó el estado de \"" + nombreDoc + "\" a: " + nuevoEstado.name(),
+            "OK",
+            null,
+            saved
+        );
+
+        return saved;
     }
 
     @Transactional
@@ -93,10 +107,22 @@ public class ExpedienteObraService {
         String nombreArchivo = fileStorageService.storeFile(archivo, "obra_" + expediente.getObraId() + "_doc_" + expediente.getDocumento().getId());
         
         expediente.setArchivoUrl(nombreArchivo);
-        expediente.setEstado(EstadoDocumento.OK); // Autocompletar a OK si sube el archivo
+        expediente.setEstado(EstadoDocumento.OK);
         expediente.setFechaRevision(LocalDateTime.now());
         expediente.setRevisadoPorId(userId);
 
-        return expedienteRepository.save(expediente);
+        ExpedienteObra saved = expedienteRepository.save(expediente);
+
+        String nombreDoc = expediente.getDocumento() != null ? expediente.getDocumento().getNombre() : "documento";
+        auditService.registrarEvento(
+            expediente.getObraId(),
+            "SUBIDA_DOCUMENTO_CHECKLIST",
+            "Se subió el documento \"" + archivo.getOriginalFilename() + "\" al apartado: \"" + nombreDoc + "\" del checklist de integración",
+            "OK",
+            null,
+            saved
+        );
+
+        return saved;
     }
 }

@@ -5,6 +5,7 @@ import com.obraspublicas.features.audit.domain.model.AuditLog;
 import com.obraspublicas.features.audit.domain.model.Bitacora;
 import com.obraspublicas.features.audit.domain.repository.AuditLogRepository;
 import com.obraspublicas.features.audit.domain.repository.BitacoraRepository;
+import com.obraspublicas.features.obras.domain.repository.ObraRepository;
 import com.obraspublicas.features.users.domain.model.User;
 import com.obraspublicas.features.users.domain.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +28,7 @@ public class AuditService {
     private final AuditLogRepository auditLogRepository;
     private final BitacoraRepository bitacoraRepository;
     private final UserRepository userRepository;
+    private final ObraRepository obraRepository;
     private final ObjectMapper objectMapper;
 
     /**
@@ -51,6 +53,22 @@ public class AuditService {
             log.error("Error al serializar datos de auditoría", e);
         }
 
+        // Resolve obra name for enriched description
+        String obraNombre = "";
+        try {
+            if (obraId != null) {
+                obraNombre = obraRepository.findById(obraId)
+                        .map(obra -> obra.getNombre())
+                        .orElse("Obra #" + obraId);
+            }
+        } catch (Exception e) {
+            obraNombre = obraId != null ? "Obra #" + obraId : "";
+        }
+
+        String enrichedDescription = (obraNombre != null && !obraNombre.isEmpty())
+                ? "[" + obraNombre + "] " + description
+                : description;
+
         // 1. Guardar log de auditoría
         AuditLog auditLog = AuditLog.builder()
                 .username(username)
@@ -60,6 +78,8 @@ public class AuditService {
                 .ip(ip)
                 .previousData(previousDataJson)
                 .newData(newDataJson)
+                .obraId(obraId)
+                .description(enrichedDescription)
                 .build();
         auditLogRepository.save(auditLog);
 
