@@ -8,6 +8,7 @@ import com.obraspublicas.features.expedientes.domain.repository.ExpedienteObraRe
 import com.obraspublicas.features.obras.domain.repository.ObraRepository;
 import com.obraspublicas.features.audit.application.service.AuditService;
 import com.obraspublicas.features.users.domain.repository.UserRepository;
+import com.obraspublicas.shared.exception.BusinessException;
 import com.obraspublicas.shared.exception.ResourceNotFoundException;
 import com.obraspublicas.shared.storage.FileStorageService;
 import lombok.RequiredArgsConstructor;
@@ -96,6 +97,27 @@ public class ExpedienteObraService {
     public ExpedienteObra subirArchivo(Long expedienteId, MultipartFile archivo, String revisadoPorUsername) {
         ExpedienteObra expediente = expedienteRepository.findById(expedienteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expediente", "id", expedienteId));
+
+        String filename = archivo.getOriginalFilename();
+        List<ExpedienteObra> otrosExpedientes = expedienteRepository.findByObraId(expediente.getObraId());
+        
+        // Verificar si el archivo ya fue subido en este o en otro ítem del expediente de esta obra
+        boolean esDuplicado = otrosExpedientes.stream().anyMatch(e -> 
+            e.getArchivoUrl() != null && filename != null && e.getArchivoUrl().toLowerCase().endsWith(filename.toLowerCase())
+        );
+
+        if (esDuplicado) {
+            String nombreDoc = expediente.getDocumento() != null ? expediente.getDocumento().getNombre() : "documento";
+            auditService.registrarEvento(
+                expediente.getObraId(),
+                "RECHAZO_DOCUMENTO_DUPLICADO",
+                "Se analizó y RECHAZÓ el archivo duplicado \"" + filename + "\" para el ítem de expediente: \"" + nombreDoc + "\"",
+                "RECHAZADO",
+                null,
+                null
+            );
+            throw new BusinessException("Documento duplicado detectado: El archivo '" + filename + "' ya se encuentra registrado en el expediente de esta obra. La subida fue rechazada.");
+        }
 
         Long userId = 1L;
         if (revisadoPorUsername != null) {

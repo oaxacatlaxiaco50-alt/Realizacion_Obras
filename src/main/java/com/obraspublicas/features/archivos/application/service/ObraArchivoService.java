@@ -5,6 +5,7 @@ import com.obraspublicas.features.archivos.domain.model.ObraArchivo;
 import com.obraspublicas.features.archivos.domain.model.TipoArchivo;
 import com.obraspublicas.features.archivos.domain.repository.ObraArchivoRepository;
 import com.obraspublicas.features.audit.application.service.AuditService;
+import com.obraspublicas.shared.exception.BusinessException;
 import com.obraspublicas.shared.exception.ResourceNotFoundException;
 import com.obraspublicas.shared.storage.FileStorageService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,28 @@ public class ObraArchivoService {
 
     @Transactional
     public ObraArchivo subirArchivo(Long obraId, CarpetaTipo carpeta, MultipartFile file, Long usuarioId) {
+        String originalFilename = file.getOriginalFilename();
+        
+        // Validación y análisis de duplicados por nombre y tamaño de archivo
+        List<ObraArchivo> existentes = repository.findByObraId(obraId);
+        boolean esDuplicado = existentes.stream().anyMatch(a -> 
+            (originalFilename != null && originalFilename.equalsIgnoreCase(a.getNombreOriginal())) ||
+            (file.getSize() > 0 && a.getTamanioBytes() != null && a.getTamanioBytes() == file.getSize() && originalFilename != null && originalFilename.equalsIgnoreCase(a.getNombreOriginal()))
+        );
+
+        if (esDuplicado) {
+            String seccion = NOMBRE_CARPETA.getOrDefault(carpeta, carpeta.name());
+            auditService.registrarEvento(
+                obraId,
+                "RECHAZO_DOCUMENTO_DUPLICADO",
+                "Se analizó y RECHAZÓ el documento duplicado: \"" + originalFilename + "\" en la sección: " + seccion,
+                "RECHAZADO",
+                null,
+                null
+            );
+            throw new BusinessException("Documento duplicado detectado: El archivo '" + originalFilename + "' ya fue subido anteriormente en esta obra. El sistema analizó y rechazó el documento.");
+        }
+
         String storedName = fileStorageService.storeFile(file, "obra_" + obraId + "_" + carpeta.name().toLowerCase());
         String contentType = file.getContentType() != null ? file.getContentType().toLowerCase() : "";
 
