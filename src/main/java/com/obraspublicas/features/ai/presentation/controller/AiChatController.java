@@ -20,7 +20,7 @@ public class AiChatController {
     private final AiChatService aiChatService;
 
     @PostMapping("/chat")
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<AiChatResponse> chat(
             @Valid @RequestBody AiChatRequest request,
             @AuthenticationPrincipal UserDetails userDetails) {
