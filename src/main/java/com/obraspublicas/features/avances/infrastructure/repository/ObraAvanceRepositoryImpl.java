@@ -82,6 +82,8 @@ public class ObraAvanceRepositoryImpl implements ObraAvanceRepository {
                 .cantidadEjecutada(e.getCantidadEjecutada())
                 .acumuladoActual(e.getAcumuladoActual())
                 .createdAt(e.getCreatedAt())
+                .estado(e.getEstado())
+                .motivoRechazo(e.getMotivoRechazo())
                 .build();
         if (e.getEvidencias() != null) {
             a.setEvidencias(e.getEvidencias().stream().map(this::toDomain).collect(Collectors.toList()));
@@ -113,6 +115,8 @@ public class ObraAvanceRepositoryImpl implements ObraAvanceRepository {
                 .metaId(d.getMetaId())
                 .cantidadEjecutada(d.getCantidadEjecutada())
                 .acumuladoActual(d.getAcumuladoActual())
+                .estado(d.getEstado())
+                .motivoRechazo(d.getMotivoRechazo())
                 .build();
     }
 }

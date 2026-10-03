@@ -169,4 +169,26 @@ public class ObraAvanceService {
     public void eliminarEvidencia(Long evidenciaId) {
         repository.deleteEvidenciaById(evidenciaId);
     }
+
+    @Transactional
+    public ObraAvance rechazarAvance(Long avanceId, String motivoRechazo) {
+        ObraAvance avance = repository.findById(avanceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Avance", "id", avanceId));
+        
+        avance.setEstado("RECHAZADO");
+        avance.setMotivoRechazo(motivoRechazo);
+        
+        ObraAvance saved = repository.save(avance);
+        
+        auditService.registrarEvento(
+            avance.getObraId(),
+            "RECHAZO_AVANCE",
+            "Se rechazó el avance del " + avance.getFechaAvance() + " — Título: \"" + avance.getTitulo() + "\". Motivo: " + motivoRechazo,
+            "OK",
+            null,
+            saved
+        );
+        
+        return saved;
+    }
 }

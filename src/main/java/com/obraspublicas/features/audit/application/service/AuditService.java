@@ -126,6 +126,9 @@ public class AuditService {
                 if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
                     ip = request.getRemoteAddr();
                 }
+                if ("0:0:0:0:0:0:0:1".equals(ip)) {
+                    ip = "127.0.0.1";
+                }
                 return ip;
             }
         } catch (Exception e) {

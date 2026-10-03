@@ -68,6 +68,8 @@ public class ObraRepositoryImpl implements ObraRepository {
             } else {
                 spec = spec.and((root, query, cb) -> cb.equal(root.get("estatus"), estatus));
             }
+        } else {
+            spec = spec.and((root, query, cb) -> cb.notEqual(root.get("estatus"), ObraEstatus.INACTIVA));
         }
         if (categoria != null && !categoria.trim().isEmpty()) {
             spec = spec.and((root, query, cb) -> cb.equal(cb.lower(root.get("categoria")), categoria.toLowerCase().trim()));
@@ -88,6 +90,8 @@ public class ObraRepositoryImpl implements ObraRepository {
     @Override
     public Page<Obra> searchGlobal(String keyword, Pageable pageable) {
         Specification<ObraEntity> spec = Specification.where(null);
+        
+        spec = spec.and((root, query, cb) -> cb.notEqual(root.get("estatus"), ObraEstatus.INACTIVA));
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             String likePattern = "%" + keyword.toLowerCase() + "%";

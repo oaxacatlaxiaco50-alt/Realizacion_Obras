@@ -56,4 +56,10 @@ public class ObraAvanceEntity {
     @OneToMany(mappedBy = "avance", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<AvanceEvidenciaEntity> evidencias = new ArrayList<>();
+
+    @Column(name = "estado")
+    private String estado;
+
+    @Column(name = "motivo_rechazo", columnDefinition = "TEXT")
+    private String motivoRechazo;
 }

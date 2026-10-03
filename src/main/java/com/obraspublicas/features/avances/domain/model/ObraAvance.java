@@ -23,4 +23,6 @@ public class ObraAvance {
     private Double acumuladoActual;
     private LocalDateTime createdAt;
     private List<AvanceEvidencia> evidencias;
+    private String estado;
+    private String motivoRechazo;
 }
