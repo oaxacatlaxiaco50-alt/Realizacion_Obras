@@ -7,8 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Slf4j
@@ -17,6 +19,8 @@ import java.util.UUID;
 public class AiChatService {
 
     private final SystemKnowledgeService systemKnowledgeService;
+
+    private static final DateTimeFormatter NOW_FORMATTER = DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy - HH:mm 'hs'", new Locale("es", "MX"));
 
     public AiChatResponse processMessage(AiChatRequest request, String username) {
         String prompt = request != null && request.getMessage() != null ? request.getMessage().toLowerCase().trim() : "";
@@ -39,16 +43,20 @@ public class AiChatService {
                 .conversationId(conversationId)
                 .timestamp(LocalDateTime.now())
                 .suggestedFollowUps(suggestedFollowUps)
-                .modelName("Gemma-2B / RAG Knowledge Engine v3")
+                .modelName("Gemma-2B / RAG Knowledge Engine v4")
                 .build();
     }
 
     private String generateConciseResponse(String prompt, String username) {
+        String fechaActual = LocalDateTime.now().format(NOW_FORMATTER);
+        fechaActual = fechaActual.substring(0, 1).toUpperCase() + fechaActual.substring(1);
+
         // 1. Saludos e Identificación
         if (prompt.contains("hola") || prompt.contains("saludos") || prompt.contains("buenos dias") 
                 || prompt.contains("buenas tardes") || prompt.contains("quien eres")) {
             return String.format("¡Hola %s! 👋 Soy el **Asistente Virtual de Obras Públicas**.\n\n" +
-                    "¿En qué te puedo ayudar hoy? Puedes preguntarme sobre obras, presupuestos, expedientes o auditoría.", username);
+                    "📅 *Hoy es %s*\n\n" +
+                    "¿En qué te puedo ayudar hoy? Puedes preguntarme sobre obras, presupuestos, fechas de expedientes o auditoría.", username, fechaActual);
         }
 
         // 2. ¿Cómo funciona el sistema? / ¿Qué hace el sistema?
@@ -56,12 +64,12 @@ public class AiChatService {
                 || prompt.contains("acerca del sistema") || prompt.contains("funciona el sistema")) {
             return "### ⚙️ ¿Cómo funciona el Sistema de Obras Públicas?\n\n" +
                     "El sistema gestiona de forma integral las obras públicas del municipio:\n\n" +
-                    "1. **Registro y Control de Obras**: Registro con código único, presupuesto, fechas, categoría y coordenadas GPS.\n" +
+                    "1. **Registro y Control de Obras**: Registro con código único, presupuesto, fechas de inicio/fin y ubicación GPS.\n" +
                     "2. **Expedientes Técnicos (57 Documentos)**: Control normativo clasificado en carpetas Social, Técnica y Contratación.\n" +
                     "3. **Control Anti-Duplicados**: Algoritmo por firma Hash (SHA-256) que rechaza archivos repetidos automáticamente.\n" +
                     "4. **Avances Fotográficos**: Registro de evidencias por etapas (*Antes, Durante, Después*).\n" +
                     "5. **Geolocalización en Mapa**: Visualización en mapa interactivo Leaflet de todas las obras del municipio.\n" +
-                    "6. **Bitácora e Historial Inalterable**: Registro de auditoría que guarda cada acción ejecutada por los usuarios.";
+                    "6. **Bitácora e Historial Inalterable**: Registro de auditoría con fecha y hora que guarda cada acción ejecutada.";
         }
 
         // 3. Control de Duplicados / Rechazo de Archivos
@@ -70,8 +78,8 @@ public class AiChatService {
             return "### 🛡️ Detección y Rechazo de Archivos Duplicados\n\n" +
                     "• **Firma Hash SHA-256**: Analiza el contenido binario real del archivo.\n" +
                     "• **Validación de Metadatos**: Verifica el nombre original, la sección del expediente y el tamaño en bytes.\n" +
-                    "• **Rechazo Automático**: Si el archivo ya existe en esa obra o expediente, el backend **cancela la subida** y muestra un mensaje explicativo.\n" +
-                    "• **Registro en Auditoría**: Guarda una alerta inalterable (`RECHAZO_DOCUMENTO_DUPLICADO`) en la bitácora.";
+                    "• **Rechazo Automático**: Si el archivo ya existe en esa obra o expediente, el backend cancela la subida y muestra un mensaje explicativo.\n" +
+                    "• **Registro en Bitácora**: Guarda una alerta inalterable (`RECHAZO_DOCUMENTO_DUPLICADO`) con la fecha y hora exacta del intento.";
         }
 
         // 4. Presupuestos y Comparativos (Mayor/Menor presupuesto)
@@ -80,7 +88,7 @@ public class AiChatService {
             return systemKnowledgeService.getHighestAndLowestBudgetObras();
         }
 
-        // 5. Total de obras, métricas o inversión acumulada (SOLO cuando lo solicitan explícitamente)
+        // 5. Total de obras, métricas o inversión acumulada
         if (prompt.contains("resumen") || prompt.contains("cuantas obras") || prompt.contains("total de obras") 
                 || prompt.contains("inversion total") || prompt.contains("monto total") || prompt.contains("estatus")) {
             return "### 📊 Resumen Ejecutivo de Obras\n\n" + systemKnowledgeService.getSummaryMetrics();
@@ -97,7 +105,7 @@ public class AiChatService {
             return "### 🏗️ Paso a paso: Crear una nueva obra\n\n" +
                     "1. Ve al módulo **Obras** en el menú lateral.\n" +
                     "2. Haz clic en **+ Nueva Obra**.\n" +
-                    "3. Ingresa Código, Nombre, Monto, Fechas y Coordenadas GPS.\n" +
+                    "3. Ingresa Código, Nombre, Monto, Fechas de Inicio y Término, y Coordenadas GPS.\n" +
                     "4. Guarda la obra para generar automáticamente su expediente técnico.";
         }
 
@@ -105,7 +113,7 @@ public class AiChatService {
             return "### 📸 Paso a paso: Subir Avances Fotográficos\n\n" +
                     "1. Abre la obra deseada en el módulo **Obras**.\n" +
                     "2. Selecciona la pestaña **Avances**.\n" +
-                    "3. Elige la etapa (*Antes, Durante, Después*), el % de avance y adjunta la imagen.";
+                    "3. Elige la etapa (*Antes, Durante, Después*), el % de avance y adjunta la imagen con la fecha correspondiente.";
         }
 
         if (prompt.contains("mapa") || prompt.contains("coordenada") || prompt.contains("geolocalizacion") || prompt.contains("gps")) {
@@ -122,8 +130,8 @@ public class AiChatService {
             return systemKnowledgeService.searchObrasByKeyword(cleanKw);
         }
 
-        // 9. Lista de obras completa
-        if (prompt.contains("lista") || prompt.contains("obras")) {
+        // 9. Lista de obras completa con fechas
+        if (prompt.contains("lista") || prompt.contains("obras") || prompt.contains("fechas")) {
             return "### 🏗️ Lista de Obras Registradas\n\n" + systemKnowledgeService.getDetailedObrasList();
         }
 
@@ -139,12 +147,12 @@ public class AiChatService {
 
         // 11. Respuesta directa y concisa para preguntas abiertas varias
         return String.format("### 🤖 Asistente de IA\n\n" +
+                "📅 *Consultado el %s*\n\n" +
                 "Respecto a tu consulta: *\"%s\"*\n\n" +
                 "Puedes pedirme información sobre:\n" +
-                "• **Obras**: Lista completa, búsqueda por nombre o presupuesto.\n" +
+                "• **Obras y Fechas**: Lista completa, plazos de término y presupuestos.\n" +
                 "• **Expedientes**: Estructura de documentos y control de duplicados.\n" +
-                "• **Auditoría**: Bitácora inalterable e historial de cambios.\n" +
-                "• **Guías**: Cómo registrar obras, avances fotográficos o ver el mapa GPS.", prompt);
+                "• **Auditoría**: Bitácora inalterable e historial de eventos con fecha y hora.", fechaActual, prompt);
     }
 
     private List<String> generateSuggestedFollowUps(String prompt) {
@@ -157,7 +165,7 @@ public class AiChatService {
             followUps.add("📜 Ver bitácora de auditoría");
             followUps.add("📁 Catálogo de 57 documentos");
         } else if (prompt.contains("monto") || prompt.contains("presupuesto") || prompt.contains("cara")) {
-            followUps.add("🏗️ Lista completa de obras");
+            followUps.add("🏗️ Lista completa de obras y fechas");
             followUps.add("📊 Resumen de inversión total");
         } else {
             followUps.add("⚙️ ¿Cómo funciona el sistema?");
