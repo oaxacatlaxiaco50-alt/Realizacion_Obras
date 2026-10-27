@@ -38,4 +38,12 @@ public class ObraUpdateRequest {
     private String direccion;
 
     private String categoria;
+
+    private String fuenteFinanciamiento;
+
+    private String beneficiarios;
+
+    private String impactoSocial;
+
+    private String contratista;
 }

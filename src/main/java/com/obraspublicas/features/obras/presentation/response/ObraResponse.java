@@ -26,6 +26,10 @@ public class ObraResponse {
     private Double longitud;
     private String direccion;
     private String categoria;
+    private String fuenteFinanciamiento;
+    private String beneficiarios;
+    private String impactoSocial;
+    private String contratista;
     private Integer porcentajeAvance;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

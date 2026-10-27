@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="20261027-025-add-contratista-to-obras" author="sistema">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="obras" columnName="contratista"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="obras">
+            <column name="contratista" type="TEXT"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

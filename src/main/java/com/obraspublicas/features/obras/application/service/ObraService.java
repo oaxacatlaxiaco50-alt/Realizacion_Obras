@@ -125,6 +125,10 @@ public class ObraService {
         if (request.getLongitud() != null) existingObra.setLongitud(request.getLongitud());
         if (request.getDireccion() != null) existingObra.setDireccion(request.getDireccion());
         if (request.getCategoria() != null) existingObra.setCategoria(request.getCategoria());
+        if (request.getFuenteFinanciamiento() != null) existingObra.setFuenteFinanciamiento(request.getFuenteFinanciamiento());
+        if (request.getBeneficiarios() != null) existingObra.setBeneficiarios(request.getBeneficiarios());
+        if (request.getImpactoSocial() != null) existingObra.setImpactoSocial(request.getImpactoSocial());
+        if (request.getContratista() != null) existingObra.setContratista(request.getContratista());
 
         Obra updatedObra = obraRepository.save(existingObra);
 

@@ -57,4 +57,16 @@ public class ObraEntity extends Auditable {
 
     @Column(name = "categoria", length = 100)
     private String categoria;
+
+    @Column(name = "fuente_financiamiento", columnDefinition = "TEXT")
+    private String fuenteFinanciamiento;
+
+    @Column(name = "beneficiarios", columnDefinition = "TEXT")
+    private String beneficiarios;
+
+    @Column(name = "impacto_social", columnDefinition = "TEXT")
+    private String impactoSocial;
+
+    @Column(name = "contratista", columnDefinition = "TEXT")
+    private String contratista;
 }
