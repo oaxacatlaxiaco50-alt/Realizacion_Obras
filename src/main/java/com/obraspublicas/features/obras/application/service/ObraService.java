@@ -2,17 +2,22 @@ package com.obraspublicas.features.obras.application.service;
 
 import com.obraspublicas.features.audit.application.service.AuditService;
 import com.obraspublicas.features.expedientes.application.service.ExpedienteObraService;
+import com.obraspublicas.features.notificaciones.application.service.NotificacionService;
 import com.obraspublicas.features.obras.domain.model.Obra;
 import com.obraspublicas.features.obras.domain.model.ObraEstatus;
 import com.obraspublicas.features.obras.domain.repository.ObraRepository;
 import com.obraspublicas.features.obras.presentation.request.ObraCreateRequest;
 import com.obraspublicas.features.obras.presentation.request.ObraUpdateRequest;
+import com.obraspublicas.features.users.domain.model.User;
 import com.obraspublicas.features.users.domain.repository.UserRepository;
 import com.obraspublicas.shared.exception.BusinessException;
 import com.obraspublicas.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +35,7 @@ public class ObraService {
     private final UserRepository userRepository;
     private final AuditService auditService;
     private final ExpedienteObraService expedienteObraService;
+    private final NotificacionService notificacionService;
     private final com.obraspublicas.features.avances.infrastructure.repository.ObraAvanceJpaRepository obraAvanceJpaRepository;
 
     @Transactional
@@ -38,9 +44,11 @@ public class ObraService {
             throw new BusinessException("Ya existe una obra registrada con el código: " + request.getCodigo());
         }
 
-        // Validar que el responsable existe
-        userRepository.findById(request.getResponsableId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", request.getResponsableId()));
+        // Validar que el responsable existe si fue asignado
+        if (request.getResponsableId() != null) {
+            userRepository.findById(request.getResponsableId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", request.getResponsableId()));
+        }
 
         Obra obra = Obra.builder()
                 .codigo(request.getCodigo())
@@ -72,6 +80,31 @@ public class ObraService {
                 savedObra
         );
 
+        Long usuarioActualId = obtenerUsuarioActualId();
+        Long responsableId = savedObra.getResponsableId();
+
+        if (responsableId != null) {
+            notificacionService.crearNotificacion(
+                    responsableId,
+                    "Nueva obra asignada",
+                    "Se te ha asignado como responsable de la obra: " + savedObra.getNombre(),
+                    "info",
+                    savedObra.getId(),
+                    savedObra.getNombre()
+            );
+        }
+
+        if (usuarioActualId != null && !Objects.equals(usuarioActualId, responsableId)) {
+            notificacionService.crearNotificacion(
+                    usuarioActualId,
+                    "Obra registrada",
+                    "Se ha registrado la obra: " + savedObra.getNombre(),
+                    "exito",
+                    savedObra.getId(),
+                    savedObra.getNombre()
+            );
+        }
+
         return savedObra;
     }
 
@@ -83,6 +116,9 @@ public class ObraService {
     @Transactional
     public Obra actualizarObra(Long id, ObraUpdateRequest request) {
         Obra existingObra = consultarObra(id);
+
+        // Obtener el responsable anterior antes de modificarlo
+        Long responsableAnteriorId = existingObra.getResponsableId();
 
         // Clonar datos anteriores para auditoría
         Obra oldObraCopy = cloneObra(existingObra);
@@ -97,9 +133,9 @@ public class ObraService {
         List<String> changeDetails = new ArrayList<>();
         String action = "MODIFICACION_OBRA";
 
-        if (request.getResponsableId() != null && !Objects.equals(existingObra.getResponsableId(), request.getResponsableId())) {
+        if (request.getResponsableId() != null && !Objects.equals(responsableAnteriorId, request.getResponsableId())) {
             action = "ASIGNACION_RESPONSABLES";
-            changeDetails.add("Responsable cambiado de " + existingObra.getResponsableId() + " a " + request.getResponsableId());
+            changeDetails.add("Responsable cambiado de " + responsableAnteriorId + " a " + request.getResponsableId());
         }
 
         boolean datesOrMontoChanged = (request.getMonto() != null && !Objects.equals(existingObra.getMonto(), request.getMonto()))
@@ -141,6 +177,33 @@ public class ObraService {
                 oldObraCopy,
                 updatedObra
         );
+
+        Long nuevoResponsableId = updatedObra.getResponsableId();
+        Long usuarioActualId = obtenerUsuarioActualId();
+        boolean cambioResponsable = request.getResponsableId() != null
+                && !Objects.equals(responsableAnteriorId, nuevoResponsableId);
+
+        if (cambioResponsable) {
+            notificacionService.crearNotificacion(
+                    nuevoResponsableId,
+                    "Nueva obra asignada",
+                    "Se te ha asignado como responsable de la obra: " + updatedObra.getNombre(),
+                    "info",
+                    updatedObra.getId(),
+                    updatedObra.getNombre()
+            );
+        }
+
+        if (usuarioActualId != null && !(cambioResponsable && Objects.equals(usuarioActualId, nuevoResponsableId))) {
+            notificacionService.crearNotificacion(
+                    usuarioActualId,
+                    "Obra actualizada",
+                    "Se actualizó la obra: " + updatedObra.getNombre(),
+                    "info",
+                    updatedObra.getId(),
+                    updatedObra.getNombre()
+            );
+        }
 
         return updatedObra;
     }
@@ -206,11 +269,41 @@ public class ObraService {
         return obra;
     }
 
+    @Transactional
+    public void eliminarObraPermanentemente(Long id) {
+        Obra existingObra = consultarObra(id);
+        if (existingObra.getEstatus() != ObraEstatus.ELIMINADA) {
+            throw new BusinessException("Solo se pueden eliminar definitivamente las obras que se encuentran en la Papelera (ELIMINADA).");
+        }
+        java.time.LocalDateTime fechaPapelera = existingObra.getUpdatedAt() != null
+                ? existingObra.getUpdatedAt()
+                : existingObra.getCreatedAt();
+        if (fechaPapelera != null) {
+            long diasEnPapelera = java.time.temporal.ChronoUnit.DAYS.between(fechaPapelera, java.time.LocalDateTime.now());
+            if (diasEnPapelera < 30) {
+                long diasRestantes = 30 - diasEnPapelera;
+                throw new BusinessException("No se puede eliminar definitivamente todavía. La obra debe cumplir al menos 30 días en la papelera (lleva "
+                        + diasEnPapelera + " días, faltan " + diasRestantes + " días).");
+            }
+        }
+        obraRepository.deletePermanentById(existingObra.getId());
+    }
+
     public List<Obra> getObrasConCoordenadas() {
         return obraRepository.findAll().stream()
                 .filter(o -> o.getLatitud() != null && o.getLongitud() != null)
                 .peek(this::enrichObraWithPorcentaje)
                 .toList();
+    }
+
+    private Long obtenerUsuarioActualId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+            return userRepository.findByUsername(authentication.getName())
+                    .map(User::getId)
+                    .orElse(null);
+        }
+        return null;
     }
 
     private Obra cloneObra(Obra original) {

@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface ObraJpaRepository extends JpaRepository<ObraEntity, Long>, JpaSpecificationExecutor<ObraEntity> {
     Optional<ObraEntity> findByCodigo(String codigo);
     boolean existsByCodigo(String codigo);
+    long countByResponsableId(Long responsableId);
 }

@@ -27,4 +27,6 @@ public interface ObraRepository {
     java.util.List<Obra> findAll();
 
     Page<Obra> searchGlobal(String keyword, Pageable pageable);
+
+    void deletePermanentById(Long id);
 }

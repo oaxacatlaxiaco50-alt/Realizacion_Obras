@@ -20,6 +20,7 @@ public class ObraRepositoryImpl implements ObraRepository {
 
     private final ObraJpaRepository jpaRepository;
     private final ObraMapper mapper;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
     @Override
     public Obra save(Obra obra) {
@@ -69,7 +70,7 @@ public class ObraRepositoryImpl implements ObraRepository {
                 spec = spec.and((root, query, cb) -> cb.equal(root.get("estatus"), estatus));
             }
         } else {
-            spec = spec.and((root, query, cb) -> cb.notEqual(root.get("estatus"), ObraEstatus.INACTIVA));
+            spec = spec.and((root, query, cb) -> cb.not(root.get("estatus").in(ObraEstatus.INACTIVA, ObraEstatus.ELIMINADA)));
         }
         if (categoria != null && !categoria.trim().isEmpty()) {
             spec = spec.and((root, query, cb) -> cb.equal(cb.lower(root.get("categoria")), categoria.toLowerCase().trim()));
@@ -91,7 +92,7 @@ public class ObraRepositoryImpl implements ObraRepository {
     public Page<Obra> searchGlobal(String keyword, Pageable pageable) {
         Specification<ObraEntity> spec = Specification.where(null);
         
-        spec = spec.and((root, query, cb) -> cb.notEqual(root.get("estatus"), ObraEstatus.INACTIVA));
+        spec = spec.and((root, query, cb) -> cb.not(root.get("estatus").in(ObraEstatus.INACTIVA, ObraEstatus.ELIMINADA)));
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             String likePattern = "%" + keyword.toLowerCase() + "%";
@@ -107,6 +108,29 @@ public class ObraRepositoryImpl implements ObraRepository {
 
     @Override
     public java.util.List<Obra> findAll() {
-        return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
+        return jpaRepository.findAll().stream()
+                .filter(e -> e.getEstatus() != ObraEstatus.ELIMINADA && e.getEstatus() != ObraEstatus.INACTIVA)
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public void deletePermanentById(Long id) {
+        jdbcTemplate.update("DELETE FROM avance_evidencias WHERE avance_id IN (SELECT id FROM obra_avances WHERE obra_id = ?)", id);
+        jdbcTemplate.update("DELETE FROM obra_avances WHERE obra_id = ?", id);
+        jdbcTemplate.update("DELETE FROM obra_metas WHERE obra_id = ?", id);
+        jdbcTemplate.update("DELETE FROM obra_archivos WHERE obra_id = ?", id);
+        jdbcTemplate.update("DELETE FROM expedientes_obras WHERE obra_id = ?", id);
+        jdbcTemplate.update("DELETE FROM notificaciones WHERE obra_id = ?", id);
+        jdbcTemplate.execute("ALTER TABLE bitacoras DISABLE TRIGGER trg_prevent_delete_bitacoras");
+        try {
+            jdbcTemplate.update("DELETE FROM bitacoras WHERE obra_id = ?", id);
+        } finally {
+            jdbcTemplate.execute("ALTER TABLE bitacoras ENABLE TRIGGER trg_prevent_delete_bitacoras");
+        }
+        jdbcTemplate.update("DELETE FROM geocercas WHERE obra_id = ?", id);
+        jdbcTemplate.update("DELETE FROM rutas_obras WHERE obra_id = ?", id);
+        jpaRepository.deleteById(id);
     }
 }

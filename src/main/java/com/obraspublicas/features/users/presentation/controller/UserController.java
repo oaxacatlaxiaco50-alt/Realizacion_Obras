@@ -134,4 +134,15 @@ public class UserController {
     public ResponseEntity<UserResponse> reactivate(@PathVariable Long id) {
         return ResponseEntity.ok(userService.reactivate(id));
     }
+
+    @DeleteMapping("/{id}/permanente")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasAuthority('USER_DELETE')")
+    @Operation(
+        summary = "Eliminar usuario permanentemente",
+        description = "Elimina definitivamente un usuario de la base de datos si no tiene obras asignadas como responsable."
+    )
+    public ResponseEntity<Void> deletePermanently(@PathVariable Long id) {
+        userService.deletePermanently(id);
+        return ResponseEntity.noContent().build();
+    }
 }

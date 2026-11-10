@@ -3,12 +3,16 @@ package com.obraspublicas.features.notificaciones.application.service;
 import com.obraspublicas.features.notificaciones.domain.model.Notificacion;
 import com.obraspublicas.features.notificaciones.domain.repository.NotificacionRepository;
 import com.obraspublicas.features.notificaciones.presentation.response.NotificacionResponse;
+import com.obraspublicas.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -39,7 +43,10 @@ public class NotificacionService {
     public NotificacionResponse marcarLeida(Long id, Long usuarioId) {
         log.info("Marcando notificacion ID: {} como leída para usuario ID: {}", id, usuarioId);
         Notificacion n = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notificacion no encontrada: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Notificación", "id", id));
+        if (!Objects.equals(n.getUsuarioId(), usuarioId)) {
+            throw new AccessDeniedException("No tiene permisos para modificar una notificación de otro usuario");
+        }
         n.setLeida(true);
         return toResponse(repository.save(n));
     }
@@ -56,7 +63,11 @@ public class NotificacionService {
     // ─────────────────────────────────────────────────────
     // CREATE NOTIFICATION (called internally by other services)
     // ─────────────────────────────────────────────────────
+    @Transactional
     public void crearNotificacion(Long usuarioId, String titulo, String mensaje, String tipo, Long obraId, String obraNombre) {
+        if (usuarioId == null) {
+            return;
+        }
         log.info("Creando notificacion '{}' para usuario ID: {}", titulo, usuarioId);
         Notificacion n = Notificacion.builder()
                 .usuarioId(usuarioId)

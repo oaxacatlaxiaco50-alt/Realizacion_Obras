@@ -70,6 +70,14 @@ public class ObraController {
         return ResponseEntity.ok(mapper.toResponse(obra));
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR') or hasAuthority('OBRA_DELETE') or hasAuthority('OBRA_UPDATE')")
+    @Operation(summary = "Eliminar obra permanentemente", description = "Elimina definitivamente una obra y sus registros asociados de la base de datos.")
+    public ResponseEntity<Void> eliminarObraPermanentemente(@PathVariable Long id) {
+        obraService.eliminarObraPermanentemente(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA','AUDITOR') or hasAuthority('OBRA_VIEW')")
     @Operation(summary = "Consulta paginada y filtrada", description = "Obtiene una lista paginada de obras filtradas por diversos criterios. Requiere permiso OBRA_VIEW.")

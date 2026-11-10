@@ -6,5 +6,6 @@ public enum ObraEstatus {
     FINALIZADA,
     COMPLETADA,
     CANCELADA,
-    INACTIVA
+    INACTIVA,
+    ELIMINADA
 }

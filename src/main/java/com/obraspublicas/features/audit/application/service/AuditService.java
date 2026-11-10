@@ -83,15 +83,52 @@ public class AuditService {
                 .build();
         auditLogRepository.save(auditLog);
 
-        // 2. Guardar en bitácora de obra
-        Bitacora bitacora = Bitacora.builder()
-                .obraId(obraId)
-                .description(description)
+        // 2. Guardar en bitácora de obra (solo si pertenece a una obra)
+        if (obraId != null) {
+            Bitacora bitacora = Bitacora.builder()
+                    .obraId(obraId)
+                    .description(description)
+                    .timestamp(LocalDateTime.now())
+                    .userId(userId)
+                    .status(status)
+                    .build();
+            bitacoraRepository.save(bitacora);
+        }
+    }
+
+    /**
+     * Registra un evento de administración de usuarios en la auditoría general.
+     */
+    public void registrarEventoUsuario(String action, String description, Object oldData, Object newData) {
+        String username = getCurrentUsername();
+        String ip = getClientIp();
+
+        String previousDataJson = null;
+        String newDataJson = null;
+
+        try {
+            if (oldData != null) {
+                previousDataJson = objectMapper.writeValueAsString(oldData);
+            }
+            if (newData != null) {
+                newDataJson = objectMapper.writeValueAsString(newData);
+            }
+        } catch (Exception e) {
+            log.error("Error al serializar datos de auditoría de usuario", e);
+        }
+
+        AuditLog auditLog = AuditLog.builder()
+                .username(username)
+                .action(action)
+                .module("USUARIOS")
                 .timestamp(LocalDateTime.now())
-                .userId(userId)
-                .status(status)
+                .ip(ip)
+                .previousData(previousDataJson)
+                .newData(newDataJson)
+                .obraId(null)
+                .description(description)
                 .build();
-        bitacoraRepository.save(bitacora);
+        auditLogRepository.save(auditLog);
     }
 
     private String getCurrentUsername() {
