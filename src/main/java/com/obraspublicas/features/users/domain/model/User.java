@@ -20,6 +20,7 @@ public class User {
     private String username;
     private String password;
     private boolean active;
+    private String activeSessionId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     @Builder.Default

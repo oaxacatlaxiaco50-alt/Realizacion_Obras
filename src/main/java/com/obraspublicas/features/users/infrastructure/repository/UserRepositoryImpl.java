@@ -56,4 +56,14 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean existsByEmail(String email) {
         return jpaRepository.existsByEmail(email);
     }
+
+    @Override
+    public void updateActiveSessionId(String username, String sessionId) {
+        jpaRepository.updateActiveSessionId(username, sessionId);
+    }
+
+    @Override
+    public String getActiveSessionIdByUsername(String username) {
+        return jpaRepository.getActiveSessionIdByUsername(username);
+    }
 }

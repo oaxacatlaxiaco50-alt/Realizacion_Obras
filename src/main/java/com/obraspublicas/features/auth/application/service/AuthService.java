@@ -2,6 +2,7 @@ package com.obraspublicas.features.auth.application.service;
 
 import com.obraspublicas.features.auth.presentation.request.LoginRequest;
 import com.obraspublicas.features.auth.presentation.response.LoginResponse;
+import com.obraspublicas.features.users.domain.repository.UserRepository;
 import com.obraspublicas.shared.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +22,7 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
     public LoginResponse login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
@@ -30,7 +33,12 @@ public class AuthService {
         );
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String token = jwtService.generateToken(userDetails);
+
+        // Generar identificador de sesión único para invalidar cualquier sesión previa en otro equipo
+        String sessionId = UUID.randomUUID().toString();
+        userRepository.updateActiveSessionId(userDetails.getUsername(), sessionId);
+
+        String token = jwtService.generateToken(userDetails, sessionId);
 
         // Extract roles (those prefixed with ROLE_)
         Set<String> roles = userDetails.getAuthorities().stream()

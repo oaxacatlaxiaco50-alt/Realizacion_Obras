@@ -1,5 +1,6 @@
 package com.obraspublicas.shared.security;
 
+import com.obraspublicas.features.users.domain.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -46,6 +48,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
                 if (jwtService.isTokenValid(jwt, userDetails)) {
+                    // Control de sesión única: verificar si este token sigue siendo la sesión activa
+                    String tokenSessionId = jwtService.extractSessionId(jwt);
+                    if (tokenSessionId != null) {
+                        String activeSessionId = userRepository.getActiveSessionIdByUsername(username);
+                        if (activeSessionId != null && !activeSessionId.equals(tokenSessionId)) {
+                            logger.warn("Sesión invalidada para usuario '" + username + "': se inició sesión desde otro dispositivo.");
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write("{\"status\":401,\"error\":\"SESSION_SUPERSEDED\",\"message\":\"Tu sesión se cerró porque se inició sesión en otro dispositivo.\"}");
+                            return;
+                        }
+                    }
+
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
@@ -56,7 +71,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            // Log security exceptions or let filter chain handle it
             logger.error("No se pudo establecer la autenticación del usuario en el contexto de seguridad", e);
         }
 

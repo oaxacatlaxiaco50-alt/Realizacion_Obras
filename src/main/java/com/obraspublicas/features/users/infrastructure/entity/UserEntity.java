@@ -39,6 +39,9 @@ public class UserEntity extends Auditable {
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(name = "active_session_id", length = 100)
+    private String activeSessionId;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_roles",

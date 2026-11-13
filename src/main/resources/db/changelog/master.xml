@@ -31,5 +31,6 @@
     <include file="db/changelog/changes/024-add-ficha-tecnica-to-obras.xml"/>
     <include file="db/changelog/changes/025-add-contratista-to-obras.xml"/>
     <include file="db/changelog/changes/026-migrate-inactiva-to-eliminada.xml"/>
+    <include file="db/changelog/changes/027-add-active-session-id-to-users.xml"/>
 
 </databaseChangeLog>

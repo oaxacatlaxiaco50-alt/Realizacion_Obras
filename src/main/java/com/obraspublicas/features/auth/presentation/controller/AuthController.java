@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -23,5 +25,11 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = authService.login(request);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/check-session")
+    @Operation(summary = "Verificar estado de sesión", description = "Verifica si el token actual sigue activo y no ha sido desplazado por otro inicio de sesión")
+    public ResponseEntity<Map<String, String>> checkSession() {
+        return ResponseEntity.ok(Map.of("status", "ACTIVE"));
     }
 }

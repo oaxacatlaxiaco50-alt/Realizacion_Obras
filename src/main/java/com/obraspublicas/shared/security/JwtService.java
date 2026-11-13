@@ -36,19 +36,31 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
+    public String extractSessionId(String token) {
+        try {
+            return extractClaim(token, claims -> claims.get("sessionId", String.class));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
     public String generateToken(UserDetails userDetails) {
+        return generateToken(userDetails, null);
+    }
+
+    public String generateToken(UserDetails userDetails, String sessionId) {
         Map<String, Object> extraClaims = new HashMap<>();
         
         // Extract roles (prefixed with ROLE_)
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(auth -> auth.startsWith("ROLE_"))
-                .map(auth -> auth.substring(5)) // Remove "ROLE_" prefix for JWT claims as requested by user
+                .map(auth -> auth.substring(5)) // Remove "ROLE_" prefix for JWT claims
                 .collect(Collectors.toList());
 
         // Extract permissions (no ROLE_ prefix)
@@ -59,6 +71,9 @@ public class JwtService {
 
         extraClaims.put("roles", roles);
         extraClaims.put("permissions", permissions);
+        if (sessionId != null) {
+            extraClaims.put("sessionId", sessionId);
+        }
 
         return buildToken(extraClaims, userDetails.getUsername(), jwtExpiration);
     }
