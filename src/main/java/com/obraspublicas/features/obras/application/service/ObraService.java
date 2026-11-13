@@ -297,7 +297,12 @@ public class ObraService {
     }
 
     @Transactional
-    public int ejecutarCierreFiscal(Integer ejercicio) {
+    public int ejecutarCierreFiscal(Integer ejercicio, boolean forzarCierre) {
+        int mesActual = LocalDate.now().getMonthValue();
+        if (mesActual != 12 && !forzarCierre) {
+            throw new BusinessException("El Cierre Fiscal anual únicamente puede ejecutarse en el último mes del año fiscal (Diciembre). Mes actual: " + mesActual);
+        }
+
         String username = "SISTEMA";
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated()) {
@@ -309,7 +314,7 @@ public class ObraService {
         auditService.registrarEvento(
                 null,
                 "CIERRE_FISCAL",
-                "El Administrador " + username + " ejecutó el Cierre Fiscal para el ejercicio " + ejercicio + ". Total de obras archivadas: " + count,
+                "El Administrador " + username + " ejecutó el Cierre Fiscal para el ejercicio " + ejercicio + (forzarCierre ? " (Modo Prueba / Cierre Anticipado)" : "") + ". Total de obras archivadas: " + count,
                 "EXITOSO",
                 null,
                 null
@@ -331,9 +336,13 @@ public class ObraService {
 
     public java.util.Map<String, Object> getResumenCierreFiscal(Integer ejercicio) {
         long pendientes = obraRepository.countObrasActivasSinCierre(ejercicio);
+        int mesActual = LocalDate.now().getMonthValue();
+        boolean esUltimoMes = (mesActual == 12);
         return java.util.Map.of(
                 "ejercicio", ejercicio,
-                "obrasPendientesCierre", pendientes
+                "obrasPendientesCierre", pendientes,
+                "mesActual", mesActual,
+                "esUltimoMes", esUltimoMes
         );
     }
 

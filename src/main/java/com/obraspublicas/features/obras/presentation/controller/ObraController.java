@@ -142,10 +142,11 @@ public class ObraController {
 
     @PostMapping("/cierre-fiscal")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    @Operation(summary = "Ejecutar Cierre Fiscal Anual", description = "Archiva las obras del ejercicio especificado para iniciar el nuevo año en blanco. Solo Administrador.")
-    public ResponseEntity<java.util.Map<String, Object>> ejecutarCierreFiscal(@RequestBody java.util.Map<String, Integer> payload) {
-        Integer ejercicio = payload.getOrDefault("ejercicio", LocalDate.now().getYear());
-        int total = obraService.ejecutarCierreFiscal(ejercicio);
+    @Operation(summary = "Ejecutar Cierre Fiscal Anual", description = "Archiva las obras del ejercicio especificado para iniciar el nuevo año en blanco. Solo Administrador y solo en el mes de Diciembre.")
+    public ResponseEntity<java.util.Map<String, Object>> ejecutarCierreFiscal(@RequestBody java.util.Map<String, Object> payload) {
+        Integer ejercicio = payload.get("ejercicio") != null ? Integer.valueOf(payload.get("ejercicio").toString()) : LocalDate.now().getYear();
+        boolean forzar = Boolean.TRUE.equals(payload.get("forzar"));
+        int total = obraService.ejecutarCierreFiscal(ejercicio, forzar);
         return ResponseEntity.ok(java.util.Map.of(
                 "mensaje", "Cierre fiscal del ejercicio " + ejercicio + " ejecutado con éxito.",
                 "ejercicio", ejercicio,
