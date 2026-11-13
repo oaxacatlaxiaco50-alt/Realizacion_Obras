@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface ObraRepository {
@@ -24,9 +25,17 @@ public interface ObraRepository {
             Pageable pageable
     );
     
-    java.util.List<Obra> findAll();
+    List<Obra> findAll();
 
     Page<Obra> searchGlobal(String keyword, Pageable pageable);
 
     void deletePermanentById(Long id);
+
+    List<Obra> findArchivoFiscal(Integer ejercicio, String categoria, Integer mes, String estatus, String queryText);
+
+    List<Integer> findEjerciciosFiscalesDisponibles();
+
+    int ejecutarCierreFiscal(Integer ejercicio, String usernameAdmin);
+
+    long countObrasActivasSinCierre(Integer ejercicio);
 }

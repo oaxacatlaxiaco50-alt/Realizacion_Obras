@@ -69,4 +69,15 @@ public class ObraEntity extends Auditable {
 
     @Column(name = "contratista", columnDefinition = "TEXT")
     private String contratista;
+
+    @Column(name = "ejercicio_fiscal")
+    @Builder.Default
+    private Integer ejercicioFiscal = java.time.LocalDate.now().getYear();
+
+    @Column(name = "archivada_fiscal")
+    @Builder.Default
+    private boolean archivadaFiscal = false;
+
+    @Column(name = "nota_cierre_fiscal", columnDefinition = "TEXT")
+    private String notaCierreFiscal;
 }

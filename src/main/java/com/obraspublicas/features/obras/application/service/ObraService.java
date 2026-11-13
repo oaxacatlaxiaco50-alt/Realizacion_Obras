@@ -296,6 +296,47 @@ public class ObraService {
                 .toList();
     }
 
+    @Transactional
+    public int ejecutarCierreFiscal(Integer ejercicio) {
+        String username = "SISTEMA";
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()) {
+            username = auth.getName();
+        }
+
+        int count = obraRepository.ejecutarCierreFiscal(ejercicio, username);
+
+        auditService.registrarEvento(
+                null,
+                "CIERRE_FISCAL",
+                "El Administrador " + username + " ejecutó el Cierre Fiscal para el ejercicio " + ejercicio + ". Total de obras archivadas: " + count,
+                "EXITOSO",
+                null,
+                null
+        );
+
+        return count;
+    }
+
+    public List<Obra> consultarArchivoFiscal(Integer ejercicio, String categoria, Integer mes, String estatus, String queryText) {
+        return obraRepository.findArchivoFiscal(ejercicio, categoria, mes, estatus, queryText)
+                .stream()
+                .peek(this::enrichObraWithPorcentaje)
+                .toList();
+    }
+
+    public List<Integer> getEjerciciosFiscalesDisponibles() {
+        return obraRepository.findEjerciciosFiscalesDisponibles();
+    }
+
+    public java.util.Map<String, Object> getResumenCierreFiscal(Integer ejercicio) {
+        long pendientes = obraRepository.countObrasActivasSinCierre(ejercicio);
+        return java.util.Map.of(
+                "ejercicio", ejercicio,
+                "obrasPendientesCierre", pendientes
+        );
+    }
+
     private Long obtenerUsuarioActualId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {

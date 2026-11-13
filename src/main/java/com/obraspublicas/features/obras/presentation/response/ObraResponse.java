@@ -30,6 +30,9 @@ public class ObraResponse {
     private String beneficiarios;
     private String impactoSocial;
     private String contratista;
+    private Integer ejercicioFiscal;
+    private boolean archivadaFiscal;
+    private String notaCierreFiscal;
     private Integer porcentajeAvance;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

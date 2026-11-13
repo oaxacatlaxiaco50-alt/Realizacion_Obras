@@ -49,7 +49,7 @@ public class ObraController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR', 'CONTRATISTA') or hasAuthority('OBRA_UPDATE')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR') or hasAuthority('OBRA_UPDATE')")
     @Operation(summary = "Actualizar obra", description = "Modifica los detalles de una obra.")
     public ResponseEntity<ObraResponse> actualizarObra(
             @PathVariable Long id,
@@ -60,7 +60,7 @@ public class ObraController {
     }
 
     @PatchMapping("/{id}/estatus")
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR', 'CONTRATISTA') or hasAuthority('OBRA_CHANGE_STATUS') or hasAuthority('OBRA_UPDATE')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR') or hasAuthority('OBRA_CHANGE_STATUS') or hasAuthority('OBRA_UPDATE')")
     @Operation(summary = "Cambio de estatus de obra", description = "Permite cambiar el estatus de una obra (ej. PLANIFICADA, EN_PROCESO, CANCELADA, INACTIVA).")
     public ResponseEntity<ObraResponse> cambiarEstatus(
             @PathVariable Long id,
@@ -138,5 +138,46 @@ public class ObraController {
         geoJson.put("features", features);
 
         return ResponseEntity.ok(geoJson);
+    }
+
+    @PostMapping("/cierre-fiscal")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Operation(summary = "Ejecutar Cierre Fiscal Anual", description = "Archiva las obras del ejercicio especificado para iniciar el nuevo año en blanco. Solo Administrador.")
+    public ResponseEntity<java.util.Map<String, Object>> ejecutarCierreFiscal(@RequestBody java.util.Map<String, Integer> payload) {
+        Integer ejercicio = payload.getOrDefault("ejercicio", LocalDate.now().getYear());
+        int total = obraService.ejecutarCierreFiscal(ejercicio);
+        return ResponseEntity.ok(java.util.Map.of(
+                "mensaje", "Cierre fiscal del ejercicio " + ejercicio + " ejecutado con éxito.",
+                "ejercicio", ejercicio,
+                "obrasArchivadas", total
+        ));
+    }
+
+    @GetMapping("/archivo-fiscal")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'AUDITOR')")
+    @Operation(summary = "Consultar Archivo Histórico Fiscal", description = "Permite al Administrador y Auditor consultar obras de ejercicios fiscales anteriores archivados.")
+    public ResponseEntity<java.util.List<ObraResponse>> consultarArchivoFiscal(
+            @RequestParam(required = false) Integer ejercicio,
+            @RequestParam(required = false) String categoria,
+            @RequestParam(required = false) Integer mes,
+            @RequestParam(required = false) String estatus,
+            @RequestParam(required = false) String query
+    ) {
+        java.util.List<Obra> obras = obraService.consultarArchivoFiscal(ejercicio, categoria, mes, estatus, query);
+        return ResponseEntity.ok(obras.stream().map(mapper::toResponse).toList());
+    }
+
+    @GetMapping("/ejercicios-fiscales")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'AUDITOR')")
+    @Operation(summary = "Obtener Ejercicios Fiscales Disponibles", description = "Lista los años fiscales registrados en el archivo histórico.")
+    public ResponseEntity<java.util.List<Integer>> getEjerciciosFiscales() {
+        return ResponseEntity.ok(obraService.getEjerciciosFiscalesDisponibles());
+    }
+
+    @GetMapping("/resumen-cierre-fiscal/{ejercicio}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Operation(summary = "Resumen previo al cierre fiscal", description = "Muestra la cantidad de obras pendientes de archivar para un ejercicio.")
+    public ResponseEntity<java.util.Map<String, Object>> getResumenCierreFiscal(@PathVariable Integer ejercicio) {
+        return ResponseEntity.ok(obraService.getResumenCierreFiscal(ejercicio));
     }
 }
