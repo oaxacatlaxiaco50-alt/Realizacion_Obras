@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="20261113-029-create-institucion-config" author="jorge">
+        <createTable tableName="institucion_config">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="nombre_municipio" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lema_oficial" type="VARCHAR(255)"/>
+            <column name="periodo_administracion" type="VARCHAR(100)"/>
+            <column name="dependencia" type="VARCHAR(255)"/>
+            <column name="logo_url" type="VARCHAR(500)"/>
+            <column name="membrete_url" type="VARCHAR(500)"/>
+            <column name="pie_pagina_reporte" type="TEXT"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <insert tableName="institucion_config">
+            <column name="id" valueNumeric="1"/>
+            <column name="nombre_municipio" value="H. Ayuntamiento Constitucional de Heroica Ciudad de Tlaxiaco"/>
+            <column name="lema_oficial" value="El poder de servir al pueblo"/>
+            <column name="periodo_administracion" value="Administración 2025 - 2027"/>
+            <column name="dependencia" value="Dirección de Obras Públicas y Desarrollo Urbano"/>
+            <column name="logo_url" value="/assets/logos/logo.png"/>
+            <column name="pie_pagina_reporte" value="Palacio Municipal s/n, Centro, Heroica Ciudad de Tlaxiaco, Oaxaca."/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
