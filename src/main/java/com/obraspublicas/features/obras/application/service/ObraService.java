@@ -323,6 +323,28 @@ public class ObraService {
         return count;
     }
 
+    @Transactional
+    public int revertirCierreFiscal(Integer ejercicio) {
+        String username = "SISTEMA";
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()) {
+            username = auth.getName();
+        }
+
+        int count = obraRepository.revertirCierreFiscal(ejercicio, username);
+
+        auditService.registrarEvento(
+                null,
+                "REVERSION_CIERRE_FISCAL",
+                "El Administrador " + username + " revirtió el Cierre Fiscal para el ejercicio " + ejercicio + ". Total de obras restauradas al padrón activo: " + count,
+                "EXITOSO",
+                null,
+                null
+        );
+
+        return count;
+    }
+
     public List<Obra> consultarArchivoFiscal(Integer ejercicio, String categoria, Integer mes, String estatus, String queryText) {
         return obraRepository.findArchivoFiscal(ejercicio, categoria, mes, estatus, queryText)
                 .stream()

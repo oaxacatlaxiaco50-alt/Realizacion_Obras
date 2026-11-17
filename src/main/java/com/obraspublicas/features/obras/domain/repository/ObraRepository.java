@@ -37,5 +37,7 @@ public interface ObraRepository {
 
     int ejecutarCierreFiscal(Integer ejercicio, String usernameAdmin);
 
+    int revertirCierreFiscal(Integer ejercicio, String usernameAdmin);
+
     long countObrasActivasSinCierre(Integer ejercicio);
 }

@@ -154,6 +154,19 @@ public class ObraController {
         ));
     }
 
+    @PostMapping("/revertir-cierre-fiscal")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @Operation(summary = "Revertir Cierre Fiscal Anual", description = "Restaura las obras archivadas de un ejercicio fiscal devolviéndolas al padrón activo.")
+    public ResponseEntity<java.util.Map<String, Object>> revertirCierreFiscal(@RequestBody java.util.Map<String, Object> payload) {
+        Integer ejercicio = payload.get("ejercicio") != null ? Integer.valueOf(payload.get("ejercicio").toString()) : LocalDate.now().getYear();
+        int total = obraService.revertirCierreFiscal(ejercicio);
+        return ResponseEntity.ok(java.util.Map.of(
+                "mensaje", "Cierre fiscal del ejercicio " + ejercicio + " revertido con éxito. Obras restauradas al padrón activo.",
+                "ejercicio", ejercicio,
+                "obrasRestauradas", total
+        ));
+    }
+
     @GetMapping("/archivo-fiscal")
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'AUDITOR')")
     @Operation(summary = "Consultar Archivo Histórico Fiscal", description = "Permite al Administrador y Auditor consultar obras de ejercicios fiscales anteriores archivados.")

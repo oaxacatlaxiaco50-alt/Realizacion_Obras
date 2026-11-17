@@ -224,6 +224,29 @@ public class ObraRepositoryImpl implements ObraRepository {
     }
 
     @Override
+    @Transactional
+    public int revertirCierreFiscal(Integer ejercicio, String usernameAdmin) {
+        List<ObraEntity> archivadas = jpaRepository.findAll().stream()
+                .filter(ObraEntity::isArchivadaFiscal)
+                .filter(o -> ejercicio == null || ejercicio.equals(o.getEjercicioFiscal()))
+                .toList();
+
+        int count = 0;
+        for (ObraEntity obra : archivadas) {
+            String nota = obra.getNotaCierreFiscal();
+            if (nota != null && nota.startsWith("Concluida administrativamente por Cierre Fiscal")) {
+                obra.setEstatus(ObraEstatus.EN_PROCESO);
+            }
+            obra.setArchivadaFiscal(false);
+            obra.setNotaCierreFiscal(null);
+            jpaRepository.save(obra);
+            count++;
+        }
+
+        return count;
+    }
+
+    @Override
     public long countObrasActivasSinCierre(Integer ejercicio) {
         return jpaRepository.findAll().stream()
                 .filter(o -> !o.isArchivadaFiscal())
