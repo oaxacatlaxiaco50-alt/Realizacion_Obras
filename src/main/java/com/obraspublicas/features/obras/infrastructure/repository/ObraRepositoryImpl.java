@@ -153,7 +153,8 @@ public class ObraRepositoryImpl implements ObraRepository {
             spec = spec.and((root, query, cb) -> cb.equal(root.get("ejercicioFiscal"), ejercicio));
         }
         if (categoria != null && !categoria.trim().isEmpty() && !categoria.equalsIgnoreCase("TODAS")) {
-            spec = spec.and((root, query, cb) -> cb.equal(cb.lower(root.get("categoria")), categoria.toLowerCase().trim()));
+            String catPattern = "%" + categoria.toLowerCase().trim() + "%";
+            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("categoria")), catPattern));
         }
         if (mes != null && mes >= 1 && mes <= 12) {
             spec = spec.and((root, query, cb) -> cb.equal(cb.function("date_part", Integer.class, cb.literal("month"), root.get("fechaInicio")), mes));
