@@ -14,3 +14,11 @@ server:
   error:
     include-message: always
     include-binding-errors: always
+
+ai:
+  ollama:
+    enabled: true
+    base-url: http://localhost:11434
+    model: gemma3:1b
+    timeout-ms: 15000
+    max-tokens: 180

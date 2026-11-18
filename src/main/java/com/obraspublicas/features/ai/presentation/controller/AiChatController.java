@@ -27,9 +27,19 @@ public class AiChatController {
     public ResponseEntity<AiChatResponse> chat(
             @Valid @RequestBody AiChatRequest request,
             @AuthenticationPrincipal UserDetails userDetails) {
-        
+
         String username = userDetails != null ? userDetails.getUsername() : "Usuario";
-        AiChatResponse response = aiChatService.processMessage(request, username);
+        String role = "AUDITOR";
+        if (userDetails != null && userDetails.getAuthorities() != null) {
+            role = userDetails.getAuthorities().stream()
+                    .map(a -> a.getAuthority())
+                    .filter(a -> a != null && a.startsWith("ROLE_"))
+                    .map(a -> a.substring(5).toUpperCase())
+                    .filter(r -> r.equals("ADMINISTRADOR") || r.equals("SUPERVISOR") || r.equals("CONTRATISTA") || r.equals("AUDITOR"))
+                    .findFirst()
+                    .orElse("AUDITOR");
+        }
+        AiChatResponse response = aiChatService.processMessage(request, username, role);
         return ResponseEntity.ok(response);
     }
 
