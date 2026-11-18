@@ -33,7 +33,7 @@ public class UserController {
     // AUDITOR       → ❌ acceso denegado
     // ─────────────────────────────────────────────────────
     @GetMapping
-    @PreAuthorize("hasRole('ADMINISTRADOR') or hasAuthority('USER_VIEW')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR') or hasAuthority('USER_VIEW')")
     @Operation(
         summary = "Listar usuarios",
         description = "Retorna la lista completa de usuarios. Requiere permiso USER_VIEW (ADMINISTRADOR, SUPERVISOR)."
@@ -50,7 +50,7 @@ public class UserController {
     // AUDITOR       → ❌ acceso denegado
     // ─────────────────────────────────────────────────────
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMINISTRADOR') or hasAuthority('USER_VIEW')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'SUPERVISOR') or hasAuthority('USER_VIEW')")
     @Operation(
         summary = "Obtener usuario por ID",
         description = "Retorna el detalle de un usuario por su ID. Requiere permiso USER_VIEW."

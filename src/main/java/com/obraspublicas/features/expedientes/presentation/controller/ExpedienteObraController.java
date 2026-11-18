@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,12 +26,14 @@ public class ExpedienteObraController {
     private final ExpedienteObraService service;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA','AUDITOR') or hasAuthority('OBRA_VIEW')")
     @Operation(summary = "Obtener el expediente completo de una obra")
     public ResponseEntity<List<ExpedienteObra>> obtenerExpediente(@PathVariable Long obraId) {
         return ResponseEntity.ok(service.obtenerExpedientePorObra(obraId));
     }
 
     @PutMapping("/{expedienteId}")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA') or hasAuthority('OBRA_UPDATE')")
     @Operation(summary = "Actualizar el estado y observaciones de un documento en el expediente")
     public ResponseEntity<ExpedienteObra> actualizarEstado(
             @PathVariable Long obraId,
@@ -42,6 +45,7 @@ public class ExpedienteObraController {
     }
 
     @PostMapping(value = "/{expedienteId}/archivo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','SUPERVISOR','CONTRATISTA') or hasAuthority('OBRA_UPDATE')")
     @Operation(summary = "Subir un archivo PDF para un documento del expediente")
     public ResponseEntity<ExpedienteObra> subirArchivo(
             @PathVariable Long obraId,
