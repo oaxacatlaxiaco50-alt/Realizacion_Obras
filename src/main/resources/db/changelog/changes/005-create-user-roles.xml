@@ -25,9 +25,9 @@
                                  referencedTableName="roles" referencedColumnNames="id"
                                  constraintName="fk_user_roles_role" onDelete="CASCADE"/>
 
-        <!-- Assigning ADMINISTRADOR role to the initial user 'jorge' -->
+        <!-- Assigning ADMINISTRADOR role to the initial user 'administrador' -->
         <insert tableName="user_roles">
-            <column name="user_id" valueComputed="(SELECT id FROM users WHERE username = 'jorge')"/>
+            <column name="user_id" valueComputed="(SELECT id FROM users WHERE username = 'administrador')"/>
             <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMINISTRADOR')"/>
         </insert>
     </changeSet>
