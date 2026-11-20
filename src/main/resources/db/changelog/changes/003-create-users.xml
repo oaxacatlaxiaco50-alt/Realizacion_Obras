@@ -37,13 +37,13 @@
         </createTable>
 
         <!-- Seeding a default admin user (administrador / password: admin123) -->
-        <!-- BCrypt hash for 'admin123': $2a$10$8.225d3S1reN1g.1t5E.K.w1G2f8/t7LdQpYg7gV5bVjHjK.D5r2u -->
+        <!-- BCrypt hash for 'admin123': $2a$10$/LF0JHZMcAmvV.7iX.AiseQ14FAgyUANnKoTqBzg./RgJQ0XZQdzi -->
         <insert tableName="users">
             <column name="first_name" value="Administrador"/>
             <column name="last_name" value="General"/>
             <column name="email" value="administrador@obraspublicas.com"/>
             <column name="username" value="administrador"/>
-            <column name="password" value="$2a$10$8.225d3S1reN1g.1t5E.K.w1G2f8/t7LdQpYg7gV5bVjHjK.D5r2u"/>
+            <column name="password" value="$2a$10$/LF0JHZMcAmvV.7iX.AiseQ14FAgyUANnKoTqBzg./RgJQ0XZQdzi"/>
             <column name="active" valueBoolean="true"/>
         </insert>
     </changeSet>

@@ -34,5 +34,6 @@
     <include file="db/changelog/changes/027-add-active-session-id-to-users.xml"/>
     <include file="db/changelog/changes/028-add-cierre-fiscal-to-obras.xml"/>
     <include file="db/changelog/changes/029-create-institucion-config.xml"/>
+    <include file="db/changelog/changes/030-update-admin-credentials.xml"/>
 
 </databaseChangeLog>
