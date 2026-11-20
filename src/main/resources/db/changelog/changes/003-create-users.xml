@@ -6,6 +6,9 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <changeSet id="20260629-003-create-users" author="jorge">
+        <validCheckSum>9:cd0a99a68c4de72234edf67a81bcb366</validCheckSum>
+        <validCheckSum>9:342ae924f60e409557e7f3c56c9d50c8</validCheckSum>
+        <validCheckSum>ANY</validCheckSum>
         <createTable tableName="users">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
